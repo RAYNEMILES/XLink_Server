@@ -1,0 +1,575 @@
+syntax = "proto3";
+import "server/pkg/proto/sdk_ws/ws.proto";
+import "google/protobuf/any.proto";
+option go_package = "./user;user";
+package user;
+
+message CommonReq{
+  string opUserID = 1;
+  string operationID = 2;
+  string token = 3;
+}
+
+message CommonResp{
+  int32  errCode = 1;
+  string errMsg = 2;
+}
+
+message DeleteUsersReq{
+  repeated string  DeleteUserIDList = 2;
+  string OpUserID = 3;
+  string OperationID = 4;
+}
+
+message DeleteUsersResp{
+  CommonResp  CommonResp = 1;
+  repeated string FailedUserIDList = 2;
+}
+
+
+message GetAllUserIDReq{
+  string opUserID = 1;
+  string operationID = 2;
+}
+message GetAllUserIDResp{
+  CommonResp  CommonResp = 1;
+  repeated string UserIDList = 2;
+}
+
+
+message AccountCheckReq{
+  repeated string CheckUserIDList = 1;
+  string OpUserID = 2;
+  string OperationID = 3;
+
+}
+message AccountCheckResp{
+  CommonResp  commonResp = 1;
+  message SingleUserStatus {
+    string userID = 1;
+    string accountStatus = 2;
+  }
+  repeated SingleUserStatus ResultList = 2;
+}
+
+
+message GetUserInfoReq{
+  repeated string userIDList = 1;
+  string OpUserID = 2;
+  string OperationID = 3;
+}
+message GetUserInfoResp{
+  CommonResp  commonResp = 1;
+  repeated server_api_params.UserInfo UserInfoList = 3;
+}
+
+message GetUserPrivacyRequest {
+  string userId = 1;
+  string operationID = 2;
+}
+message GetUserPrivacyResponse {
+  CommonResp commonResp = 1;
+  repeated Privacy Privacy = 2;
+}
+
+message SearchUserRequest {
+  repeated string userIDList = 1;
+  string OpUserID = 2;
+  string OperationID = 3;
+}
+
+message SearchUserResponse{
+  CommonResp  commonResp = 1;
+  repeated server_api_params.UserInfo UserInfoList = 3;
+}
+
+message GetUserPrivacyByUserIdListRequest {
+  string operationID = 1;
+  repeated string userIdList = 2;
+}
+
+message GetUserPrivacyByUserIdListResponse {
+  CommonResp commonResp = 1;
+  map<string, UserPrivacy> result = 2;
+}
+
+message UserPrivacy {
+  string userId = 1;
+  repeated Privacy Privacy = 2;
+}
+
+message Privacy {
+  string SettingKey = 1;
+  string SettingValue = 2;
+}
+
+message SetUserPrivacyRequest {
+  string userId = 1;
+  string operationID = 2;
+  repeated Privacy Privacy = 3;
+}
+
+message SetUserPrivacyResponse {
+  CommonResp commonResp = 1;
+}
+
+
+message UpdateUserInfoReq{
+  server_api_params.UserInfo UserInfo = 1;
+  string OpUserID = 2;
+  string  operationID = 3;
+}
+message UpdateUserInfoResp{
+  CommonResp  commonResp = 1;
+}
+message SetGlobalRecvMessageOptReq{
+  string userID = 1;
+  string  operationID = 2;
+  int32 globalRecvMsgOpt = 3;
+}
+message SetGlobalRecvMessageOptResp{
+  CommonResp  commonResp = 1;
+}
+
+message Conversation{
+  string OwnerUserID = 1;
+  string ConversationID = 2;
+  int32 RecvMsgOpt = 3;
+  int32 ConversationType = 4;
+  string UserID = 5;
+  string GroupID = 6;
+  int32 UnreadCount = 7;
+  int64 DraftTextTime = 8;
+  bool IsPinned = 9;
+  int64 PinnedTime = 10;
+  string AttachedInfo = 11;
+  bool IsPrivateChat = 12;
+  int32 GroupAtType = 13;
+  bool IsNotInGroup = 14;
+  string Ex = 15;
+}
+
+message SetConversationReq{
+  Conversation Conversation = 1;
+  int32 notificationType = 2;
+  string OperationID = 3;
+}
+
+message SetConversationResp{
+  CommonResp  commonResp = 1;
+}
+
+message GetInviteLinkRequest {
+  string userId = 1;
+  string operationID = 2;
+}
+message GetInviteLinkResponse {
+  CommonResp commonResp = 1;
+  string inviteLink = 2;
+}
+
+message SetRecvMsgOptReq {
+  string OwnerUserID = 1;
+  string ConversationID = 2;
+  int32 RecvMsgOpt = 3;
+  int32 notificationType = 4;
+  string OperationID = 5;
+}
+
+message SetRecvMsgOptResp {
+  CommonResp  commonResp = 1;
+}
+
+message GetConversationReq{
+  string ConversationID = 1;
+  string OwnerUserID = 2;
+  string OperationID = 3;
+}
+
+message GetConversationResp{
+  CommonResp  commonResp = 1;
+  Conversation Conversation = 2;
+}
+
+message GetConversationsReq{
+  string OwnerUserID = 1;
+  repeated string ConversationIDs = 2;
+  string OperationID = 3;
+}
+
+message GetConversationsResp{
+  CommonResp  commonResp = 1;
+  repeated Conversation Conversations = 2;
+}
+
+message GetAllConversationsReq{
+  string OwnerUserID = 1;
+  string OperationID = 2;
+}
+
+message GetAllConversationsResp{
+  CommonResp  commonResp = 1;
+  repeated Conversation Conversations = 2;
+}
+
+message BatchSetConversationsReq{
+  repeated Conversation Conversations = 1;
+  string OwnerUserID = 2;
+  int32 notificationType = 3;
+  string OperationID = 4;
+}
+
+message BatchSetConversationsResp{
+  CommonResp  commonResp = 1;
+  repeated string Success = 2;
+  repeated string Failed = 3;
+}
+
+message ResignUserReq{
+  string UserId = 1;
+  string OperationID = 2;
+}
+
+message ResignUserResp{
+  CommonResp  commonResp = 1;
+}
+
+message GetUserByIdReq{
+  string UserId = 1;
+  string OperationID = 2;
+}
+
+message User{
+  string ProfilePhoto = 1;
+  string Nickname = 2;
+  string UserId = 3;
+  int64 CreateTime = 4;
+  bool IsBlock = 5;
+  int32 Status = 6;
+  string SourceId = 7;
+  string SourceCode = 8;
+  string CreateIp = 9;
+  string UpdateIp = 10;
+  string PhoneNumber = 11;
+  string Address = 12;
+  string Email = 13;
+  string Uuid = 14;
+  int64 LastLoginTime = 15;
+  int32 LastLoginDevice = 16;
+  int32 VideoStatus = 17;
+  int32 AudioStatus = 18;
+  int32 Gender = 19;
+  string Remark  = 20;
+  string LoginIp = 21;
+}
+
+message UserThirdInfo{
+  string Nickname = 1;
+  string PhoneNumber = 2;
+  string UserId = 3;
+  string Email = 4;
+  string OfficialName = 5;
+  string Wallet = 6;
+  string Facebook = 7;
+  string Google = 8;
+  string Apple = 9;
+}
+
+message GetUserByIdResp{
+  CommonResp CommonResp = 1;
+  User user = 2;
+}
+
+message GetUsersByNameReq {
+  string UserName = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string OperationID = 3;
+}
+
+message GetUsersByNameResp {
+  repeated User users = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  int32 UserNums = 3;
+}
+
+message AlterUserReq{
+  string UserId = 1;
+  string OperationID = 2;
+  string PhoneNumber = 3;
+  string Nickname = 4;
+  string Email = 5;
+  string OpUserId = 6;
+  string Password = 7;
+  int32 Gender = 8;
+  repeated string Interests = 9;
+  string Remark = 10;
+  string SourceId = 11;
+  string SourceCode = 12;
+  string FaceURL = 13;
+}
+
+message AlterUserResp{
+  CommonResp  CommonResp = 1;
+}
+
+message GetUsersReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string UserName = 3;
+}
+
+message GetUsersResp{
+  CommonResp  CommonResp = 1;
+  repeated User user = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 UserNums = 4;
+}
+
+message GetUsersRequest {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string UserId = 3;
+  string SourceId = 4;
+  string SourceCode = 5;
+  string StartTime = 6;
+  string EndTime = 7;
+  string OrderBy = 8;
+  string Type = 9;
+  string AccountStatus = 10;
+  string Remark  = 11;
+  int32 LastLoginDevice = 12;
+  int32 Gender = 13;
+}
+
+message GetUsersThirdInfoRequest {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string UserId = 3;
+  string ThirdType = 4;
+  string ThirdName = 5;
+}
+
+message GetUsersThirdInfoResponse {
+  CommonResp commonResp = 1;
+  repeated UserThirdInfo UserThirdInfo = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 UserNums = 4;
+}
+
+message AddUserReq{
+  string OperationID = 1;
+  string PhoneNumber = 2;
+  string UserId = 3;
+  string name = 4;
+  string OpUserId = 5;
+  string Password = 6;
+  string SourceId = 7;
+  string Code = 8;
+  int32 Gender = 9;
+  repeated int64 Interests = 10;
+  string Remark = 11;
+  string Email = 12;
+  string FaceURL = 13;
+}
+
+message AddUserResp{
+  CommonResp  CommonResp = 1;
+}
+
+
+message BlockUserReq{
+  string UserId = 1;
+  string EndDisableTime = 2;
+  string OperationID = 3;
+  string OpUserId = 4;
+}
+
+message BlockUserResp{
+  CommonResp  CommonResp = 1;
+}
+
+message UnBlockUserReq{
+  string UserId = 1;
+  string OperationID = 2;
+  string OpUserId = 3;
+}
+
+message UnBlockUserResp{
+  CommonResp  CommonResp = 1;
+}
+
+message GetBlockUsersReq{
+  server_api_params.RequestPagination Pagination = 1;
+  string OperationID = 2;
+  int32 BlockUserNum = 3;
+}
+
+message BlockUser {
+  User User = 1;
+  string BeginDisableTime = 2;
+  string EndDisableTime = 3;
+}
+
+message GetBlockUsersResp{
+  CommonResp  CommonResp = 1;
+  repeated BlockUser BlockUsers = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 UserNums = 4;
+}
+
+message GetBlockUserByIdReq {
+  string User_id = 1;
+  string OperationID = 2;
+}
+
+message GetBlockUserByIdResp {
+  BlockUser BlockUser = 2;
+}
+
+message DeleteUserReq {
+  string User_id = 1;
+  string OperationID = 2;
+  string OpUserId = 3;
+  string Reason = 4;
+}
+
+message DeleteUserResp {
+  CommonResp  CommonResp = 1;
+}
+
+message SwitchStatusReq {
+  string User_id = 1;
+  string OperationID = 2;
+  string OpUserId = 3;
+  int32 Status = 4;
+  int32 StatusType = 5;
+}
+
+message SwitchStatusResp {
+  CommonResp  CommonResp = 1;
+}
+
+message ExistsUserRequest {
+  string UserId = 1;
+  string PhoneNumber = 2;
+  string OperationID = 3;
+}
+
+message ExistsUserResponse {
+  CommonResp commonResp = 1;
+}
+
+message UserIdIsExistRequest {
+  string UserId = 1;
+  string OperationID = 2;
+}
+
+message UserIdIsExistResponse {
+  CommonResp commonResp = 1;
+  bool IsExist = 2;
+}
+
+message GetUsersInfoByPhoneListRequest {
+  string OperationID = 1;
+  string UserId = 2;
+  repeated string PhoneNumber = 3;
+}
+
+message GetUsersInfoByPhoneListResponse {
+  CommonResp commonResp = 1;
+  repeated User user = 2;
+}
+
+message GetYouKnowUsersByContactListRequest {
+  string OperationID = 1;
+  string UserId = 2;
+  repeated string PhoneNumber = 3;
+}
+
+message GetYouKnowUsersByContactListResponse {
+  CommonResp commonResp = 1;
+  repeated User user = 2;
+}
+
+message GetDeletedUsersReq {
+  server_api_params.RequestPagination Pagination = 1;
+  string OperationID = 2;
+  string User = 3;
+  int32 Gender = 4;
+  string Reason = 5;
+  string Location = 6;
+  int32 LastLoginDevice = 7;
+  string DeletedBy = 8;
+  int32 TimeType = 9;
+  string StartTime = 10;
+  string EndTime = 11;
+}
+
+message DeletedUserRes {
+  string UserID = 1;
+  string Username = 2;
+  string ProfilePhoto = 3;
+  string PhoneNumber = 4;
+  int32 Gender = 5;
+  string LastLoginIP = 6;
+  string Location = 7;
+  int64 CreateTime = 8;
+  int64 DeleteTime = 9;
+  string DeletedBy = 10;
+  string Reason = 11;
+}
+
+message GetDeletedUsersResp {
+  CommonResp CommResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated DeletedUserRes DeletedUsers = 3;
+  int64 DeletedUsersCount = 4;
+}
+
+service user {
+  rpc GetUserInfo(GetUserInfoReq) returns(GetUserInfoResp);
+  rpc UpdateUserInfo(UpdateUserInfoReq) returns(UpdateUserInfoResp);
+  rpc RemoveUserFaceUrl(UpdateUserInfoReq) returns(UpdateUserInfoResp);
+  rpc SetGlobalRecvMessageOpt(SetGlobalRecvMessageOptReq) returns(SetGlobalRecvMessageOptResp);
+  rpc DeleteUsers(DeleteUsersReq)returns(DeleteUsersResp);
+  rpc GetAllUserID(GetAllUserIDReq)returns(GetAllUserIDResp);
+  rpc GenerateFriendAndGroupForChannel(CommonReq)returns(CommonResp);
+
+  rpc AccountCheck(AccountCheckReq)returns(AccountCheckResp);
+  rpc GetConversation(GetConversationReq)returns(GetConversationResp);
+  rpc GetAllConversations(GetAllConversationsReq)returns(GetAllConversationsResp);
+  rpc GetConversations(GetConversationsReq)returns(GetConversationsResp);
+  rpc BatchSetConversations(BatchSetConversationsReq)returns(BatchSetConversationsResp);
+  rpc SetConversation(SetConversationReq)returns(SetConversationResp);
+  rpc SetRecvMsgOpt(SetRecvMsgOptReq)returns(SetRecvMsgOptResp);
+
+  rpc GetUserById(GetUserByIdReq) returns (GetUserByIdResp);
+  rpc GetUsersByName(GetUsersByNameReq) returns (GetUsersByNameResp);
+  rpc ResignUser(ResignUserReq) returns (ResignUserResp);
+  rpc AlterUser(AlterUserReq) returns (AlterUserResp);
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResp);
+  rpc AddUser(AddUserReq) returns (AddUserResp);
+  rpc BlockUser(BlockUserReq) returns (BlockUserResp);
+  rpc UnBlockUser(UnBlockUserReq) returns (UnBlockUserResp);
+  rpc GetBlockUsers(GetBlockUsersReq) returns (GetBlockUsersResp);
+  rpc GetBlockUserById(GetBlockUserByIdReq) returns (GetBlockUserByIdResp);
+  rpc DeleteUser(DeleteUserReq) returns (DeleteUserResp);
+
+  rpc SwitchStatus(SwitchStatusReq) returns (SwitchStatusResp);
+  rpc GetIviteLink(GetInviteLinkRequest) returns (GetInviteLinkResponse);
+  // rpc AlterAddFriendStatus(SwitchStatusReq) returns (SwitchStatusResp);
+  rpc ExistsUser(ExistsUserRequest) returns (ExistsUserResponse);
+  rpc UserIdIsExist(UserIdIsExistRequest) returns (UserIdIsExistResponse);
+
+  rpc GetUsersInfoByPhoneList(GetUsersInfoByPhoneListRequest) returns (GetUsersInfoByPhoneListResponse);
+  rpc GetUsersThirdInfo(GetUsersThirdInfoRequest) returns (GetUsersThirdInfoResponse);
+  rpc GetYouKnowUsersByContactList(GetYouKnowUsersByContactListRequest) returns (GetYouKnowUsersByContactListResponse);
+
+  // privacy
+  rpc GetPrivacy(GetUserPrivacyRequest) returns (GetUserPrivacyResponse);
+  rpc SetPrivacy(SetUserPrivacyRequest) returns (SetUserPrivacyResponse);
+  rpc GetUserPrivacyByUserIdList(GetUserPrivacyByUserIdListRequest) returns (GetUserPrivacyByUserIdListResponse);
+  rpc SearchUser(SearchUserRequest) returns (SearchUserResponse);
+
+  rpc GetDeletedUsers(GetDeletedUsersReq)returns(GetDeletedUsersResp);
+}

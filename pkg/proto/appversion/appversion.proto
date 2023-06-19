@@ -1,0 +1,92 @@
+syntax = "proto3";
+import "server/pkg/proto/sdk_ws/ws.proto";
+option go_package = "./appversion;appversion";
+package appversion;
+
+message CommonResp{
+  int32  errCode = 1;
+  string errMsg = 2;
+}
+
+message AppVersion {
+  string ID = 1;
+  string Version = 2;
+  int32 Type = 3;
+  int32 Status = 4;
+  int32 Isforce = 5;
+  string Title = 6;
+  string DownloadUrl = 7;
+  string Content = 8;
+  int64 CreateTime = 9;
+  string CreateUser = 10;
+  int64 UpdateTime = 11;
+  string UpdateUser = 12;
+}
+
+message GetAppVersionByIDReq {
+  string OperationID = 1;
+  string ID = 2;
+}
+
+message GetAppVersionByIDResp {
+  AppVersion appversion = 1;
+}
+
+message GetLatestAppVersionReq {
+  string OperationID = 1;
+  string client = 2;
+}
+
+message GetLatestAppVersionResp {
+  AppVersion appversion = 1;
+}
+
+message GetAppVersionsReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string client = 3;
+  string status = 4;
+  string createTimeBegin = 5;
+  string createTimeEnd = 6;
+  string OrderBy = 7;
+}
+
+message GetAppVersionsResp {
+  repeated AppVersion appversions = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  int32 Total = 3;
+}
+
+message AddAppVersionReq {
+  string OperationID = 1;
+  string version = 2;
+  string client = 3;
+  int32 isforce = 4;
+  string title = 5;
+  string downloadUrl = 6;
+  string remark = 7;
+  int32 status = 8;
+  int32 type = 9;
+  string userID = 10;
+}
+
+message EditAppVersionReq {
+  string ID = 1;
+  string OperationID = 2;
+  string version = 3;
+  string client = 4;
+  int32 isforce = 5;
+  string title = 6;
+  string downloadUrl = 7;
+  string remark = 8;
+  int32 status = 9;
+  int32 type = 10;
+  string userID = 11;
+}
+
+message DeleteAppVersionReq {
+  string OperationID = 1;
+  string ID = 2;
+  string userID = 3;
+}
+

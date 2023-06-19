@@ -1,0 +1,3 @@
+/.gitlab-ci.yml merge=ours
+/script/path_info.cfg merge=ours
+/config merge=ours

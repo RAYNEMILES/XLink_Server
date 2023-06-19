@@ -1,0 +1,623 @@
+syntax = "proto3";
+import "server/pkg/proto/sdk_ws/ws.proto";
+import "server/pkg/proto/admin_cms/admin_cms.proto";
+import "server/pkg/proto/news/news.proto";
+import "server/pkg/proto/short_video/short_video.proto";
+option go_package = "./moments;moments";
+package moments;
+
+message CommonResp{
+  int32  errCode = 1;
+  string errMsg = 2;
+}
+
+message Moment{
+  string CreatorID = 1;
+  string MomentID = 2;
+  string MContentText = 3;
+  string MContentImagesArray = 4;
+  string MContentVideosArray = 5;
+  int32 MLikesCount = 6;
+  int32 MCommentsCount = 7;
+  int64 MRepostCount = 8;
+  int64 MCreateTime = 9;
+  int64 MUpdateTime = 10;
+  string OrignalCreatorID = 11;
+  string OrignalID = 12;
+  bool IsReposted = 13;
+  int64 DeleteTime = 14;
+  string DeletedBy = 15;
+  int32 Status = 16;
+  int32 Privacy = 17;
+  string UserID = 18;
+  string UserName = 19;
+  string UserProfileImg = 20;
+  string MContentThumbnilArray = 21;
+  int64 ArticleID = 22;
+  ArticleDetailsInMoment ArticleDetailsInMoment     = 23;
+  repeated MomentImageRequestObject MContentImagesArrayV2 = 24;
+  repeated MomentVideoRequestObject MContentVideosArrayV2 = 25;
+  string OriginalCreatorName = 26;
+  string OriginalCreatorProfileImg = 27;
+  string WoomFileID = 28;
+  short_video.ShortVideoInfo WoomDetails = 29;
+
+//  repeated  news.GetUserArticleByArticleIDResponse Article = 23;
+
+}
+
+message MomentImageRequestObject{
+  string ImageUrl     = 1;
+  string SnapShotUrl     = 2;
+  int32 ImageWidth     = 3;
+  int32 ImageHeight     = 4;
+
+}
+message MomentVideoRequestObject{
+  string VideoUrl     = 1;
+  string SnapShotUrl     = 2;
+  int32 VideoWidth     = 3;
+  int32 VideoHeight     = 4;
+
+}
+
+message ArticleDetailsInMoment{
+  news.UserArticle Article     = 1;
+  news.UserFollow Official     = 2;
+
+}
+message CreateMomentResponse{
+  int32  errCode = 1;
+  string errMsg = 2;
+  Moment Moment = 3;
+
+}
+
+
+
+message MomentLike{
+  string CreatorID = 1;
+  string MomentID = 2;
+  string UserID = 3;
+  string UserName = 4;
+  string UserProfileImg = 5;
+  int32 Status = 6;
+}
+
+message GetMomentLike{
+  string MomentID = 1;
+  string Account = 2;
+  int64 MCreateTime = 3;
+  string MContentText = 4;
+  string MContentImagesArray = 5;
+  string MContentVideosArray = 6;
+  string UserID = 7;
+  string UserName = 8;
+  int64 CreateTime = 9;
+  int32 Status = 10;
+  int32 Privacy = 11;
+  string AccountNickname = 12;
+  repeated MomentImageRequestObject MContentImagesArrayV2 = 13;
+  repeated MomentVideoRequestObject MContentVideosArrayV2 = 14;
+}
+
+message MomentCancelLike{
+  string CreatorID = 1;
+  string MomentID = 2;
+}
+
+
+message MomentComment{
+  string CreatorID = 1;
+  string MomentID = 2;
+  string CommentContent = 3;
+}
+message MomentCommentResponse{
+  int32  errCode = 1;
+  string errMsg = 2;
+  MomentCommentResp Comment = 3;
+}
+
+message GetMomentComment{
+  string MomentID = 1;
+  string PublishAccount = 2;
+  int64 MCreateTime = 3;
+  string MContentText = 4;
+  string MContentImagesArray = 5;
+  string MContentVideosArray = 6;
+  string UserID = 7;
+  string UserName = 8;
+  string CommentContent = 9;
+  string CreateBy = 10;
+  int64 CreateTime = 11;
+  int64 CommentReplies = 12;
+  int64 LikeCounts = 13;
+  string CommentID = 14;
+  int32 Status = 15;
+  int32 Privacy = 16;
+  string CommentParentId = 17;
+  string PublishName = 18;
+  string CommentedUseID = 19;
+  string CommentedUserName = 20;
+  string ReplyCommentId = 21;
+  repeated MomentImageRequestObject MContentImagesArrayV2 = 22;
+  repeated MomentVideoRequestObject MContentVideosArrayV2 = 23;
+}
+
+message ReplyOfMomentComment{
+  string CreatorID = 1;
+  string MomentID = 2;
+  string CommentContent = 3;
+  string CommentID = 4;
+}
+
+// ListHomeTimeLineOfMomentsRequest
+message ListHomeTimeLineOfMomentsReq{
+  string CreatorID = 1;
+  int64 PageNumber = 2; 
+	int64 MomentLimit = 3;  
+	int64 CommentsLimit = 4;
+}
+message ListHomeTimeLineOfMoments{
+  repeated HomeTimeLineOfMoments HomeTimeLineOfMoments = 1;
+}
+
+message HomeTimeLineOfMoments{
+  Moment Moment = 1;
+  repeated MomentLikeResponse MomentLikes = 2;
+  repeated MomentCommentResp MomentComments = 3;
+}
+
+message MomentLikeResponse{
+  string MomentID       = 1;
+	string UserID         = 2;
+	string UserName       = 3;
+	string UserProfileImg = 4; 
+	string CreateBy       = 5;
+	int64 CreateTime     = 6;
+	string UpdateBy       = 7;
+	int64 UpdatedTime    = 8;
+	string DeletedBy      = 9;
+	int64 DeleteTime     = 10;
+	int32 Status         = 11;
+}
+
+
+message MomentCommentResp {
+	string MomentID        = 1;
+	string CommentID       = 2;
+	string UserID          = 3;
+	string UserName        = 4;
+	string UserProfileImg  = 5;
+	string CommentContent  = 6;
+	string CommentParentID = 7;
+  string CPUserID         = 8;
+  string CPUserName       =9;
+  string CPUserProfileImg =10;
+	string CreateBy        = 11;
+	int64 CreateTime      = 12;
+	string UpdateBy        = 13;
+	int64 UpdatedTime     = 14;
+	string DeletedBy       = 15;
+	int64 DeleteTime      = 16;
+	int32 Status          = 17;
+	int32 AccountStatus          = 18;
+}
+
+message GetMomentRes {
+  string MomentID = 1;
+  int64 MCreateTime = 2;
+  string MContentText = 3;
+  string MContentImagesArray = 4;
+  string MContentVideosArray = 5;
+  repeated MomentImageRequestObject MContentImagesArrayV2 = 6;
+  repeated MomentVideoRequestObject MContentVideosArrayV2 = 7;
+  int32 Privacy = 8;
+  string UserID = 9;
+  string UserName = 10;
+  int32 Status = 11;
+  repeated admin_cms.InterestResp interests = 12;
+  string MContentThumbnilArray = 13;
+  string OrignalID = 14;
+  int32 MomentType = 15;
+  string OriginalCreatorName = 16;
+  string OriginalCreatorID = 17;
+  int64 ArticleID = 18;
+}
+
+message MomentDetailRes {
+  string MomentID = 1;
+  int64 MCreateTime = 2;
+  string MContentText = 3;
+  string MContentImagesArray = 4;
+  string MContentVideosArray = 5;
+  string UserID = 6;
+  string UserName = 7;
+  string LastLoginIp = 8;
+  int32 MLikesCount = 9;
+  int32 MCommentsCount = 10;
+  int64 MRepostCount = 11;
+  int32 Privacy = 12;
+  int32 CommentCtl = 13;
+  string OriginalCreatorName = 14;
+  string  OrignalCreatorID = 15;
+  string OrignalID = 16;
+  repeated MomentImageRequestObject MContentImagesArrayV2 = 17;
+  repeated MomentVideoRequestObject MContentVideosArrayV2 = 18;
+}
+
+message GetMomentDetailsByIDRequest {
+  string  CreatorID = 1;  
+	string  MomentID  = 2;
+}
+
+message GetMomentDetailsByIDResponse{
+  Moment Moment = 1;
+  repeated MomentLikeResponse MomentLikes = 2;
+  repeated MomentCommentResp MomentComments = 3;
+}
+
+
+message GetMomentCommentsByIDRequest {
+  string OperationID   = 1; 
+	string CreatorID     = 2;
+	string MomentID      = 3;
+	int64 PageNumber    = 4;
+	int64 CommentsLimit = 5;
+}
+message GetMomentCommentsByIDResponse{
+  repeated MomentCommentResp MomentComments = 1;
+}
+
+
+message RepostAMomentRequest {
+	string OperationID = 1; 
+	string CreatorID  = 2; 
+	string MomentID  = 3;
+}
+
+message GetAnyUserMomentsByIDRequest {
+  string OperationID = 1;
+  int64 PageNumber = 2;
+  int64 ShowNumber = 3;
+  string UserId = 4;
+  string CurrentUserId = 5;
+}
+
+message GetAnyUserMomentsByIDResp {
+  CommonResp  CommonResp = 1;
+  repeated Moment Moments = 2;
+}
+
+message GetUserMomentCountRequest {
+  string OperationID = 1;
+  string UserId = 3;
+  string CurrentUserId = 4;
+}
+
+message GetUserMomentCountResp {
+  CommonResp  CommonResp = 1;
+  int64 Posts = 2;
+  int64 Likes = 3;
+}
+
+message DeleteMomentRequest {
+  string OperationID  = 1;
+  string CreatorID  = 2;
+  string MomentID   = 3;
+}
+
+
+message GetMomentsReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string Content = 3;
+  string Account = 4;
+  int32 Privacy = 5;
+  int32 IsReposted = 6;
+  string OriginalUser = 7;
+  int32 IsBlocked = 8;
+  string StartTime = 9;
+  string EndTime = 10;
+  string OrderBy = 11;
+  int32 MediaType = 12;
+  int32 ContentType = 13;
+}
+
+message GetMomentsResp {
+  CommonResp  CommonResp = 1;
+  repeated GetMomentRes Moments = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 MomentsNums = 4;
+}
+
+message DeleteMomentsReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  repeated string Moments = 3;
+  repeated int64 ArticleIDs = 4;
+}
+
+message DeleteMomentsResp {
+  CommonResp  CommonResp = 1;
+}
+
+message AlterMomentReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  string MomentId = 3;
+  int32 Privacy = 4;
+  bool IsReposted = 5;
+  string Content = 6;
+  string MContentImagesArray = 7;
+  string MContentVideosArray = 8;
+  string MContentThumbnilArray = 9;
+  repeated MomentImageRequestObject MContentImagesArrayV2 = 10;
+  repeated MomentVideoRequestObject MContentVideosArrayV2 = 11;
+}
+
+message AlterMomentResp {
+  CommonResp  CommonResp = 1;
+}
+
+message ChangeMomentStatusReq {
+  string OperationID = 1;
+  repeated string MomentIds = 2;
+  int32 Status = 3;
+}
+
+message ChangeMomentStatusResp {
+  CommonResp  CommonResp = 1;
+}
+
+message ModifyVisibilityReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  int32 Privacy = 3;
+  repeated string MomentIds = 4;
+}
+
+message ModifyVisibilityResp {
+  CommonResp  CommonResp = 1;
+}
+
+message GetMomentDetailsReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string Account = 3;
+  int32 MediaType = 4;
+  string Content = 5;
+  string StartTime = 6;
+  string EndTime = 7;
+  string OrderBy = 8;
+  int32 ContentType = 9;
+  int32 Privacy = 10;
+  string MomentID = 11;
+  string OriginalID = 12;
+}
+
+message GetMomentDetailsResp {
+  CommonResp  CommonResp = 1;
+  repeated MomentDetailRes MomentDetails = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 MomentsNums = 4;
+}
+
+message CtlMomentCommentReq {
+  string OperationID = 1;
+  string MomentId = 2;
+  int32 CommentCtl = 3;
+}
+
+message CtlMomentCommentResp {
+  CommonResp  CommonResp = 1;
+}
+
+message GetCommentsReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string PublishUser = 3;
+  string MContentText = 4;
+  string CommentUser = 5;
+  string CommentContent = 6;
+  int32 TimeType = 7;
+  string StartTime = 8;
+  string EndTime = 9;
+  string OrderBy = 10;
+  string MomentId = 11;
+  string ParentCommentId = 12;
+  int32 MediaType = 13;
+  int32 ContentType = 14;
+  int32 Privacy = 15;
+  string CommentType = 16;
+  string CommentedUser = 17;
+  string ReplyCommentId = 18;
+}
+
+message GetCommentsResp {
+  CommonResp  CommonResp = 1;
+  repeated GetMomentComment Comments = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 CommentsNums = 4;
+}
+
+message RemoveCommentsReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  repeated string CommentIds = 3;
+  repeated string MomentIds = 4;
+  repeated string ParentIds = 5;
+  repeated string ReplyIds = 6;
+}
+
+message RemoveCommentsResp {
+  CommonResp  CommonResp = 1;
+}
+
+message AlterCommentReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  string CommentId = 3;
+  string Content = 4;
+}
+
+message AlterCommentResp {
+  CommonResp  CommonResp = 1;
+}
+
+message SwitchCommentHideStateReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  string CommentId = 3;
+  int32 Status = 4;
+}
+
+message SwitchCommentHideStateResp {
+  CommonResp  CommonResp = 1;
+}
+
+message GetLikesReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string PublishUser = 3;
+  string MContentText = 4;
+  string LikeUser = 5;
+  int32 TimeType = 6;
+  string StartTime = 7;
+  string EndTime = 8;
+  string OrderBy = 9;
+  string MomentId = 10;
+  int32 MediaType = 11;
+  int32 ContentType = 12;
+  int32 Privacy = 13;
+}
+
+message GetLikesResp {
+  CommonResp  CommonResp = 1;
+  repeated GetMomentLike Likes = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 LikeNums = 4;
+}
+
+message RemoveLikesReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  repeated string MomentsId = 3;
+  repeated string UsersId = 4;
+}
+
+message RemoveLikesResp {
+  CommonResp  CommonResp = 1;
+}
+
+message SwitchLikeHideStateReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  string MomentId = 3;
+  string UserId = 4;
+  int32 Status = 5;
+}
+
+message SwitchLikeHideStateResp {
+  CommonResp  CommonResp = 1;
+}
+
+
+message DeleteMomentCommentRequest {
+  string OperationID = 1;
+  string CreatorID  = 2;
+  string CommentID   = 3;
+}
+
+// GlobalSearchInMomentsRequest SearchKeyWord
+message GlobalSearchInMomentsRequest{
+  string CreatorID = 1;
+  int64 PageNumber = 2;
+  int64 MomentLimit = 3;
+  int64 CommentsLimit = 4;
+  string SearchKeyWord = 5;
+}
+
+message GetMomentAnyUserMediaByIDRequest {
+  string OperationID = 1;
+  string UserID = 2;
+  int32 LastCount = 3;
+}
+message Pic {
+  string URL = 1;
+  int32 Type = 2;
+}
+
+message GetMomentAnyUserMediaByIDResp {
+  repeated Pic pics = 1;
+  int64 AllMediaMomentCount = 2;
+}
+
+service moments {
+    rpc CreateMoment(Moment)returns(CreateMomentResponse);
+    rpc CreateMomentLike(MomentLike)returns(CommonResp);
+    rpc CancelMomentLike(MomentCancelLike)returns(CommonResp);
+
+    rpc CreateMomentComment(MomentComment)returns(MomentCommentResponse);
+    rpc CreateReplyOfMomentComment(ReplyOfMomentComment)returns(MomentCommentResponse);
+    rpc GetListHomeTimeLineOfMoments(ListHomeTimeLineOfMomentsReq)returns(ListHomeTimeLineOfMoments);
+    rpc GetMomentDetailsByID(GetMomentDetailsByIDRequest)returns(GetMomentDetailsByIDResponse);
+    rpc GetMomentCommentsByID(GetMomentCommentsByIDRequest)returns(GetMomentCommentsByIDResponse);
+    rpc RepostAMoment(RepostAMomentRequest)returns(CreateMomentResponse);
+    rpc GetAnyUserMomentsByID(GetAnyUserMomentsByIDRequest)returns(GetAnyUserMomentsByIDResp);
+    rpc GetUserMomentCount(GetUserMomentCountRequest)returns(GetUserMomentCountResp);
+
+    rpc DeleteMoment(DeleteMomentRequest)returns(CommonResp);
+
+    rpc GetMoments(GetMomentsReq)returns(GetMomentsResp);
+    rpc DeleteMoments(DeleteMomentsReq)returns(DeleteMomentsResp);
+    rpc AlterMoment(AlterMomentReq)returns(AlterMomentResp);
+    rpc ChangeMomentStatus(ChangeMomentStatusReq)returns(ChangeMomentStatusResp);
+    rpc ModifyVisibility(ModifyVisibilityReq)returns(ModifyVisibilityResp);
+
+    rpc GetMomentDetails(GetMomentDetailsReq)returns(GetMomentDetailsResp);
+    rpc CtlMomentComment(CtlMomentCommentReq)returns(CtlMomentCommentResp);
+
+    rpc GetComments(GetCommentsReq)returns(GetCommentsResp);
+    rpc RemoveComments(RemoveCommentsReq)returns(RemoveCommentsResp);
+    rpc AlterComment(AlterCommentReq)returns(AlterCommentResp);
+    rpc SwitchCommentHideState(SwitchCommentHideStateReq)returns(SwitchCommentHideStateResp);
+
+    rpc GetLikes(GetLikesReq)returns(GetLikesResp);
+    rpc RemoveLikes(RemoveLikesReq)returns(RemoveLikesResp);
+    rpc SwitchLikeHideState(SwitchLikeHideStateReq)returns(SwitchLikeHideStateResp);
+
+    rpc DeleteMomentComment(DeleteMomentCommentRequest)returns(CommonResp);
+    rpc GlobalSearchInMoments(GlobalSearchInMomentsRequest)returns(ListHomeTimeLineOfMoments);
+
+    rpc GetMomentAnyUserMediaByID(GetMomentAnyUserMediaByIDRequest)returns(GetMomentAnyUserMediaByIDResp);
+
+}
+
+
+
+
+
+message Article {
+  int64 ArticleID = 1;
+  int64 OfficialID = 2;
+  string Title = 3;
+  string Content = 4;
+  string TextContent = 5;
+  string OfficialName = 6;
+  string OfficialProfileImg = 7;
+  string CreatedBy = 8;
+  int64 CreateTime = 9;
+  string UpdatedBy = 10;
+  int64 UpdateTime = 11;
+  string DeletedBy = 12;
+  int64 DeleteTime = 13;
+  int32 Status = 14;
+  int32 Privacy = 15;
+  int64 CommentCounts = 16;
+  int64 LikeCounts = 17;
+  int64 RepostCounts = 18;
+  string LastLoginIp = 19;
+  string LastLoginTime = 20;
+  int32 OfficialType = 21;
+}

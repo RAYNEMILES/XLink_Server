@@ -1,0 +1,639 @@
+syntax = "proto3";
+import "google/protobuf/any.proto";
+option go_package = "./short_video;short_video";
+package short_video;
+
+message CommonResp{
+  int32  errCode = 1;
+  string errMsg = 2;
+}
+
+message RequestPagination {
+  int32 pageNumber = 1;
+  int32 showNumber = 2;
+}
+
+message ResponsePagination {
+  int32 CurrentPage = 5;
+  int32 ShowNumber = 6;
+}
+
+message UserInfoMessage {
+  string UserId = 1;
+  string Nickname = 2;
+  string FaceURL = 3;
+  bool IsDeleted = 4;
+}
+
+message OperationMessage {
+  bool IsLike = 1;
+  bool IsComment = 2;
+}
+
+message IsFollowMessage {
+  bool IsFollow = 1;
+}
+
+message ShortVideoCommentInfo {
+  int64 CommentId = 1;
+  string FileId = 2;
+  string Content = 3;
+  int64 ParentId = 4;
+  int64 LevelId = 5;
+  int64 CreateTime = 6;
+  int64 CommentReplyCount = 7;
+  int64 CommentLikeCount = 8;
+  int32 Status = 9;
+  OperationMessage SelfOperation = 10;
+  OperationMessage UpOperation = 11;
+  UserInfoMessage CommentUserInfo = 12;
+  UserInfoMessage ReplyToUserInfo = 13;
+  repeated ShortVideoCommentInfo ReplyComment = 14;
+}
+
+message ShortVideoNoticeMessage {
+  int64 NoticeId = 1;
+  string FileId = 2;
+  int64 CommentId = 3;
+  int32 NoticeType = 4;
+  int64 CreateTime = 5;
+  int32 State = 6;
+  string Context = 7;
+  UserInfoMessage UpUserInfo = 8;
+  OperationMessage SelfInfo = 9;
+}
+
+message CreateShortVideoRequest {
+  string OperationID = 1;
+  string UserId = 2;
+
+  string Name = 3;
+  string Desc = 4;
+  repeated int64 InterestIds = 5;
+  string MediaUrl = 6;
+  string CoverUrl = 7;
+  int64 Size = 8;
+  int64 Height = 9;
+  int64 Width = 10;
+  string Type = 11;
+  string FileId = 12;
+}
+
+message CreateShortVideoResponse {
+  CommonResp commonResp = 1;
+  string FileId = 2;
+}
+
+message SearchShortVideoRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  repeated string Keyword = 3;
+}
+
+message SearchShortVideoResponse {
+  CommonResp commonResp = 1;
+  repeated ShortVideoInfo shortVideoInfoList = 2;
+}
+
+message GetShortVideoNoticesRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  int32 NoticeType = 3;
+  int32 State = 4;
+  RequestPagination pagination = 5;
+}
+
+message GetShortVideoNoticesResponse {
+  CommonResp commonResp = 1;
+  ResponsePagination pagination = 2;
+  int64 NoticeCount = 3;
+  repeated ShortVideoNoticeMessage shortVideoNoticeList = 4;
+}
+
+message GetShortVideoUserCountByUserIdRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  string OperateUserId = 3;
+}
+
+message GetShortVideoUserCountByUserIdResponse {
+  CommonResp commonResp = 1;
+  int64 WorkNum = 2;
+  int64 LikeCount = 3;
+  int64 CommentNum = 4;
+  int64 CommentLikeNum = 5;
+  int64 FansNum = 6;
+  int64 FollowNum = 7;
+  int64 NoticeNum = 8;
+  int64 HarvestedLikesNumber = 9;
+}
+
+message GetCommentPageRequest {
+  string OperationID = 1;
+  string UserId = 2;
+  int64 CommentId = 3;
+  int64 SourceCommentId = 4;
+  RequestPagination pagination = 5;
+}
+
+message GetCommentPageResponse {
+  CommonResp commonResp = 1;
+  ResponsePagination pagination = 2;
+  ShortVideoCommentInfo commentInfo = 3;
+  repeated ShortVideoCommentInfo replyList = 4;
+  int64 ReplyCount = 5;
+  string CreatorUserId = 6;
+  int64 TotalReplyNum = 7;
+}
+
+message GetCommentPageReplyListRequest {
+  string OperationID = 1;
+  string UserId = 2;
+  int64 CommentId = 3;
+  int64 SourceCommentId = 4;
+  RequestPagination pagination = 5;
+}
+
+message GetCommentPageReplyListResponse {
+  CommonResp commonResp = 1;
+  ResponsePagination pagination = 2;
+  repeated ShortVideoCommentInfo replyList = 4;
+  int64 ReplyCount = 5;
+}
+
+message ShortVideoInfo {
+  int64 Id = 1;
+  string FileId = 2;
+  string Name = 3;
+  string Desc = 4;
+  int32 ClassId = 5;
+  string ClassName = 6;
+  string CoverUrl = 7;
+  string MediaUrl = 8;
+  string Type = 9;
+  int64 Size = 10;
+  int64 Height = 11;
+  int64 Width = 12;
+  string Json = 13;
+  int64 LikeNum = 14;
+  int64 CommentNum = 15;
+  int64 ReplyNum = 16;
+  int64 ForwardNum = 17;
+  string UserId = 18;
+  int64 CreateTime = 19;
+  int64 UpdateTime = 20;
+  int32 Status = 21;
+  UserInfoMessage UpUserInfo = 22;
+  OperationMessage SelfInfo = 23;
+  IsFollowMessage IsUpFollow = 24;
+}
+
+message GetShortVideoByFileIdRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  string FileId = 3;
+  bool IsAdmin = 4;
+}
+
+message GetShortVideoByFileIdResponse {
+  CommonResp commonResp = 1;
+  ShortVideoInfo shortVideoInfo = 2;
+}
+
+message GetShortVideoByFileIdListRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  repeated string FileIdList = 3;
+  string OperationUserId = 4;
+}
+
+message GetShortVideoByFileIdListResponse {
+  CommonResp commonResp = 1;
+  repeated ShortVideoInfo shortVideoInfoList = 2;
+}
+
+message FollowRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  string FollowUserId = 3;
+  bool Follow = 4;
+}
+
+message FollowResponse {
+  CommonResp commonResp = 1;
+}
+
+message GetFollowListRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  string OperateUserId = 3;
+  RequestPagination pagination = 4;
+}
+
+message GetFollowListResponse {
+  CommonResp commonResp = 1;
+  ResponsePagination pagination = 2;
+  repeated UserInfoMessage followList = 3;
+  int64 FollowCount = 4;
+}
+
+message GetFansListRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  string OperateUserId = 3;
+  RequestPagination pagination = 4;
+}
+
+message GetFansListResponse {
+  CommonResp commonResp = 1;
+  ResponsePagination pagination = 2;
+  repeated UserInfoMessage fansList = 3;
+  int64 FansCount = 4;
+}
+
+message IsFollowRequest {
+  string OperationID = 1;
+  string UserId = 2;
+  string FollowUserId = 3;
+}
+
+message IsFollowResponse {
+  CommonResp commonResp = 1;
+  bool IsFollow = 2;
+}
+
+message ShortVideoLikeRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  string FileId = 3;
+  bool Like = 4;
+}
+
+message ShortVideoLikeResponse {
+  CommonResp commonResp = 1;
+}
+
+message GetLikeShortVideoListRequest {
+  string  OperationID = 1;
+  string OperatorUserId = 2;
+  string UserId = 3;
+  RequestPagination pagination = 4;
+}
+
+message GetLikeShortVideoListResponse {
+  CommonResp commonResp = 1;
+  ResponsePagination pagination = 2;
+  repeated ShortVideoInfo shortVideoInfoList = 3;
+  int64 ShortVideoCount = 4;
+}
+
+message GetShortVideoListByUserIdRequest {
+  string OperationID = 1;
+  string OperatorUserId = 2;
+  string UserId = 3;
+  RequestPagination pagination = 4;
+}
+
+message GetShortVideoListByUserIdResponse {
+  CommonResp commonResp = 1;
+  ResponsePagination pagination = 2;
+  IsFollowMessage IsUpFollow = 3;
+  repeated ShortVideoInfo shortVideoInfoList = 4;
+  int64 ShortVideoCount = 5;
+}
+
+message GetRecommendShortVideoListRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  int32 Size = 3;
+}
+
+message GetRecommendShortVideoListResponse {
+  CommonResp commonResp = 1;
+  repeated string FileIdList = 2;
+  repeated ShortVideoInfo shortVideoInfoList = 3;
+}
+
+message GetFollowShortVideoListRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  RequestPagination pagination = 3;
+}
+
+message GetFollowShortVideoListResponse {
+  CommonResp commonResp = 1;
+  ResponsePagination pagination = 2;
+  repeated string FileIdList = 3;
+  int64 ShortVideoCount = 4;
+  repeated ShortVideoInfo shortVideoInfoList = 5;
+}
+
+message ShortVideoCommentLikeRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  int64 CommentId = 3;
+  string FileId = 4;
+  bool Like = 5;
+}
+
+message ShortVideoCommentLikeResponse {
+  CommonResp commonResp = 1;
+}
+
+message ShortVideoCommentRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  string FileId = 3;
+  int64 ParentId = 4;
+  string Content = 5;
+}
+
+message ShortVideoCommentResponse {
+  CommonResp commonResp = 1;
+  int64 CommentId = 2;
+}
+
+message DeleteShortVideoRequest {
+  string  OperationID = 1;
+  int64 CommentId = 2;
+  string UserId = 3;
+  string FileId = 4;
+  bool IsAdmin = 5;
+}
+
+message DeleteShortVideoResponse {
+  CommonResp commonResp = 1;
+}
+
+message GetShortVideoCommentListRequest {
+  string  OperationID = 1;
+  string OperationUserID = 2;
+  string FileId = 3;
+  int64 CommentId = 4;
+  RequestPagination pagination = 5;
+  string UserId = 6;
+  int64 ParentId = 7;
+  int32 OrderBy = 8;
+  int64 SourceCommentId = 9;
+}
+
+message GetShortVideoCommentListResponse {
+  CommonResp commonResp = 1;
+  ResponsePagination pagination = 2;
+  repeated ShortVideoCommentInfo commentList = 3;
+  int64 CommentCount = 4;
+  int64 Level0CommentCount = 5;
+}
+
+message GetUpdateShortVideoSignRequest {
+  string  OperationID = 2;
+  string UserId = 1;
+  string Desc = 3;
+  repeated int32 InterestId = 4;
+}
+
+message GetUpdateShortVideoSignResponse {
+  CommonResp  commonResp = 1;
+  string Sign = 2;
+}
+
+
+message FileDeletedCallBackRequest {
+  string OperationID = 1;
+  string EventType = 2;
+  FileDeleteEventMessage FileDeleteEvent = 3;
+}
+
+message FileDeletedCallBackResponse {
+  CommonResp  commonResp = 1;
+}
+
+message ProcedureStateChangeCallBackRequest {
+  string OperationID = 1;
+  string EventType = 2;
+  ProcedureStateChangeEventMessage ProcedureStateChangeEvent = 3;
+}
+
+message ProcedureStateChangeEventMessage {
+  string TaskId = 1;
+  string Status = 2;
+  uint32 ErrCode = 3;
+  string Message = 4;
+  string FileId = 5;
+  string FileName = 6;
+  string FileUrl = 7;
+  repeated Mediaprocessresultset MediaProcessResultSet = 9;
+}
+
+message Mediaprocessresultset {
+  string Type = 1;
+  Transcodetask TranscodeTask = 2;
+}
+
+message Transcodetask {
+  string Status = 1;
+  uint32 ErrCode = 2;
+  string Message = 3;
+  Input Input = 4;
+  Output Output = 5;
+}
+
+message Input {
+  uint32 Definition = 1;
+}
+
+message Output {
+  string URL = 1;
+  uint32 Size = 2;
+  string Container = 3;
+  uint32 Height = 4;
+  uint32 Width = 5;
+  uint32 Bitrate = 6;
+  string Md5 = 7;
+  double Duration = 8;
+  repeated Videostreamset1 VideoStreamSet = 9;
+  repeated Audiostreamset1 AudioStreamSet = 10;
+  uint32 Definition = 11;
+}
+
+message Videostreamset {
+  uint32 Bitrate = 1;
+  string Codec = 2;
+  uint32 Fps = 3;
+  uint32 Height = 4;
+  uint32 Width = 5;
+}
+
+message Videostreamset1 {
+  uint32 Bitrate = 1;
+  string Codec = 2;
+  uint32 Fps = 3;
+  uint32 Height = 4;
+  uint32 Width = 5;
+}
+
+message Audiostreamset1 {
+  uint32 Bitrate = 1;
+  string Codec = 2;
+  uint32 SamplingRate = 3;
+}
+
+message Audiostreamset {
+  uint32 Bitrate = 1;
+  string Codec = 2;
+  uint32 SamplingRate = 3;
+}
+
+message Metadata {
+  double AudioDuration = 1;
+  repeated Audiostreamset AudioStreamSet = 2;
+  uint32 Bitrate = 3;
+  string Container = 4;
+  uint32 Duration = 5;
+  uint32 Height = 6;
+  uint32 Rotate = 7;
+  uint32 Size = 8;
+  uint32 VideoDuration = 9;
+  repeated Videostreamset VideoStreamSet = 10;
+  uint32 Width = 11;
+}
+
+message ProcedureStateChangeCallBackResponse {
+  CommonResp  commonResp = 1;
+}
+
+message DeletePartsMessage {
+  string Type = 1;
+  uint32 Definition = 2;
+}
+
+message FileDeleteResultInfoMessage {
+  string FileId = 1;
+  repeated DeletePartsMessage DeleteParts = 2;
+}
+
+message FileDeleteEventMessage {
+  repeated string FileIdSet = 1;
+  repeated FileDeleteResultInfoMessage FileDeleteResultInfo = 2;
+}
+
+
+message FileUploadCallBackRequest {
+  string OperationID = 1;
+  string EventType = 2;
+  FileUploadEventMessage FileUploadEvent = 3;
+}
+
+message FileUploadCallBackResponse {
+  CommonResp  commonResp = 1;
+}
+
+message SourceInfoMessage {
+  string SourceType = 1;
+  string SourceContext = 2;
+}
+
+message BlockShortVideoRequest {
+  string  OperationID = 1;
+  string UserId = 2;
+  string FileId = 3;
+}
+
+message BlockShortVideoResponse {
+  CommonResp commonResp = 1;
+}
+
+message MediaBasicInfoMessage {
+  string Name = 1;
+  string Description = 2;
+  string CreateTime = 3;
+  string UpdateTime = 4;
+  string ExpireTime = 5;
+  uint32 ClassId = 6;
+  string ClassName = 7;
+  string ClassPath = 8;
+  string CoverUrl = 9;
+  string Type = 10;
+  string MediaUrl = 11;
+  repeated google.protobuf.Any TagSet = 12;
+  string StorageRegion = 13;
+  SourceInfoMessage SourceInfo = 14;
+  string Vid = 15;
+}
+
+message AudioStreamSetMessage {
+  uint32 Bitrate = 1;
+  string Codec = 2;
+  uint32 SamplingRate = 3;
+}
+
+message VideoStreamSetMessage {
+  uint32 Bitrate = 1;
+  string Codec = 2;
+  string CodecTag = 3;
+  uint32 Fps = 4;
+  uint32 Height = 5;
+  uint32 Width = 6;
+}
+
+message MetaDataMessage {
+  double AudioDuration = 1;
+  repeated AudioStreamSetMessage AudioStreamSet = 2;
+  uint32 Bitrate = 3;
+  string Container = 4;
+  double Duration = 5;
+  uint32 Height = 6;
+  uint32 Rotate = 7;
+  uint32 Size = 8;
+  double VideoDuration = 9;
+  repeated VideoStreamSetMessage VideoStreamSet = 10;
+  uint32 Width = 11;
+}
+
+message FileUploadEventMessage {
+  string FileId = 1;
+  MediaBasicInfoMessage MediaBasicInfo = 2;
+  MetaDataMessage MetaData = 3;
+  string ProcedureTaskId = 4;
+  string ReviewAudioVideoTaskId = 5;
+}
+
+
+service shortVideo {
+  // call back
+  rpc FileUploadCallBack(FileUploadCallBackRequest) returns (FileUploadCallBackResponse);
+  rpc FileDeletedCallBack(FileDeletedCallBackRequest) returns (FileDeletedCallBackResponse);
+  rpc ProcedureStateChangeCallBack(ProcedureStateChangeCallBackRequest) returns (ProcedureStateChangeCallBackResponse);
+
+  rpc CreateShortVideo(CreateShortVideoRequest) returns (CreateShortVideoResponse);
+  rpc GetUpdateShortVideoSign(GetUpdateShortVideoSignRequest) returns (GetUpdateShortVideoSignResponse);
+
+  rpc GetShortVideoByFieldId(GetShortVideoByFileIdRequest) returns (GetShortVideoByFileIdResponse);
+  rpc GetShortVideoByFieldIdList(GetShortVideoByFileIdListRequest) returns (GetShortVideoByFileIdListResponse);
+  rpc SearchShortVideo(SearchShortVideoRequest) returns (SearchShortVideoResponse);
+
+  rpc ShortVideoLike(ShortVideoLikeRequest) returns (ShortVideoLikeResponse);
+  rpc GetLikeShortVideoList(GetLikeShortVideoListRequest) returns (GetLikeShortVideoListResponse);
+
+  rpc ShortVideoComment(ShortVideoCommentRequest) returns (ShortVideoCommentResponse);
+  rpc DeleteShortVideoComment(DeleteShortVideoRequest) returns (DeleteShortVideoResponse);
+  rpc ShortVideoCommentLike(ShortVideoCommentLikeRequest) returns (ShortVideoCommentLikeResponse);
+  rpc GetShortVideoCommentList(GetShortVideoCommentListRequest) returns (GetShortVideoCommentListResponse);
+  rpc GetCommentPage(GetCommentPageRequest) returns (GetCommentPageResponse);
+  rpc GetCommentPageReplyList(GetCommentPageReplyListRequest) returns (GetCommentPageReplyListResponse);
+
+  rpc GetRecommendShortVideoList(GetRecommendShortVideoListRequest) returns (GetRecommendShortVideoListResponse);
+  rpc GetFollowShortVideoList(GetFollowShortVideoListRequest) returns (GetFollowShortVideoListResponse);
+
+  rpc Follow(FollowRequest) returns (FollowResponse);
+  rpc GetFollowList(GetFollowListRequest) returns (GetFollowListResponse);
+  rpc GetFansList(GetFansListRequest) returns (GetFansListResponse);
+  rpc IsFollow(IsFollowRequest) returns (IsFollowResponse);
+
+  rpc GetShortVideoListByUserId(GetShortVideoListByUserIdRequest) returns (GetShortVideoListByUserIdResponse);
+
+  rpc GetShortVideoUserCountByUserId(GetShortVideoUserCountByUserIdRequest) returns (GetShortVideoUserCountByUserIdResponse);
+  rpc GetShortVideoNoticeList(GetShortVideoNoticesRequest) returns (GetShortVideoNoticesResponse);
+
+  rpc BlockShortVideo(BlockShortVideoRequest) returns (BlockShortVideoResponse);
+}

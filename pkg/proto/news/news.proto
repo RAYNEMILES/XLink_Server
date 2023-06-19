@@ -1,0 +1,1199 @@
+syntax = "proto3";
+import "server/pkg/proto/sdk_ws/ws.proto";
+import "server/pkg/proto/admin_cms/admin_cms.proto";
+option go_package = "./news;news";
+package news;
+
+message commonResponse {
+  int32  errCode = 1;
+  string errMsg = 2;
+}
+
+message Official {
+  int64 Id = 1;
+  string UserID = 2;
+  int32 Type = 3;
+  int32 IdType = 4;
+  string IdName = 5;
+  string IdNumber = 6;
+  string FaceURL = 7;
+  string Nickname = 8;
+  string Bio = 9;
+  string CountryCode = 10;
+  int32 ProcessStatus = 11;
+  string ProcessBy = 12;
+  string ProcessFeedback = 13;
+  int32 CreateTime = 14;
+  int32 ProcessTime = 15;
+  string InitialNickname = 16;
+  int32 IsSystem = 17;
+}
+
+message OfficialAccountResponse {
+  Official official = 1;
+  repeated admin_cms.InterestResp Interests = 2;
+}
+
+message registerOfficialRequest {
+  string operationID = 1;
+  string userID = 2;
+  int32 userGender = 3;
+  int32 type = 4;
+  int32 idType = 5;
+  string idName = 6;
+  string idNumber = 7;
+  string faceURL = 8;
+  string nickname = 9;
+  string bio = 10;
+  string countryCode = 11;
+  repeated int64 interests = 12;
+}
+
+message getSelfOfficialInfoRequest {
+  string operationID = 1;
+  string userID = 2;
+}
+
+message selfUserInfo {
+  string userID = 1;
+  int64 officialID = 2;
+  string nickname = 3;
+  string faceURL = 4;
+}
+
+message selfOfficialInfo {
+  string nickname = 1;
+  int64 nicknameUpdateTime = 2;
+  int32 nicknameUpdateCount = 3;
+  string bio = 4;
+  string faceURL = 5;
+  int32 processStatus = 6;
+  string processFeedback = 7;
+  int64 postCounts = 8;
+  int64 followCounts = 9;
+  int64 likeCounts = 10;
+  repeated int64 interests = 11;
+}
+
+message getSelfOfficialInfoResponse {
+  message Data {
+    selfUserInfo userInfo = 1;
+    optional selfOfficialInfo officialInfo = 2;
+  }
+  int32  errCode = 1;
+  string errMsg = 2;
+  optional Data data = 3;
+}
+
+message setSelfOfficialInfoRequest {
+  string operationID = 1;
+  string userID = 2;
+  string faceURL = 3;
+  string nickname = 4;
+  string bio = 5;
+  repeated int64 interests = 6;
+}
+
+message GetOfficialAccountsReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string OfficialAccount = 3;
+  int32 AccountType = 4;
+  int32 IdType = 5;
+  string IdNumber = 6;
+  int32 ProcessStatus = 7;
+  string TagsId = 8;
+  int32 TimeType = 9;
+  string StartTime = 10;
+  string EndTime = 11;
+  string OrderBy = 12;
+  int32 IsSystem = 13;
+  string Bio = 14;
+}
+
+message GetOfficialAccountsResp {
+  commonResponse  CommonResp = 1;
+  repeated OfficialAccountResponse OfficialAccount = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 OfficialNums = 4;
+  int64 PendingNums = 5;
+}
+
+message DeleteOfficialAccountsReq {
+  string OpUserId = 1;
+  string OperationID = 2;
+  repeated string Officials = 3;
+}
+
+message DeleteOfficialAccountsResp {
+  commonResponse  CommonResp = 1;
+}
+
+message AlterOfficialAccountReq {
+  string OperationID = 1;
+  Official Official = 2;
+  repeated int64 Interests = 3;
+  string OpUserID = 4;
+}
+
+message AlterOfficialAccountResp {
+  commonResponse  CommonResp = 1;
+}
+
+message AddOfficialAccountReq {
+  string OpUserId = 1;
+  string OperationID = 2;
+  string UserID = 3;
+  string  Nickname = 4;
+  string InitialNickname = 5;
+  int32 Type = 6;
+  int32 IdType = 7;
+  string IdName = 8;
+  string IdNumber = 9;
+  repeated int64 Interests = 10;
+  int32 IsSystem = 11;
+  string ProfilePhoto = 12;
+  string Bio = 13;
+}
+
+message AddOfficialAccountResp {
+  commonResponse  CommonResp = 1;
+}
+
+message ProcessReq {
+  string OpUserId = 1;
+  string OperationID = 2;
+  int64 OfficialId = 3;
+  int32 ProcessStatus = 4;
+  string ProcessFeedback = 5;
+}
+
+message ProcessResp {
+  commonResponse  CommonResp = 1;
+}
+
+
+message followOfficialAccountRequest {
+  string operationID = 1;
+  int64 officialID = 2;
+  string userID = 3;
+}
+message unfollowOfficialAccountRequest {
+  string operationID = 1;
+  int64 officialID = 2;
+  string userID = 3;
+}
+
+message UpdateOfficialFollowSettingsRequest {
+  string operationID = 1;
+  int64 officialID = 2;
+  string userID = 3;
+  bool muted = 4;
+  bool enabled = 5;
+}
+message OfficialFollowSettingsByOfficialIDRequest {
+  string OperationID = 1;
+  int64 OfficialID = 2;
+  string ReqUserID = 3;
+}
+
+message OfficialFollowSettingsByOfficialIDResponse {
+  commonResponse CommonResp = 1;
+  UserFollow UserFollow = 2;
+}
+
+message blockOfficialFollowsRequest {
+  string operationID = 1;
+  string officialUserID = 2;
+  repeated string userIDList = 3;
+}
+
+message unblockOfficialFollowsRequest {
+  string operationID = 1;
+  string officialUserID = 2;
+  repeated string userIDList = 3;
+}
+
+message deleteOfficialFollowsRequest {
+  string operationID = 1;
+  string officialUserID = 2;
+  repeated string userIDList = 3;
+}
+
+message likeArticleRequest {
+  string operationID = 1;
+  int64 articleID = 2;
+  string userID = 3;
+}
+
+message unlikeArticleRequest {
+  string operationID = 1;
+  int64 articleID = 2;
+  string userID = 3;
+}
+
+message likeArticleCommentRequest {
+  string operationID = 1;
+  int64 commentID = 2;
+  string userID = 3;
+}
+
+message unlikeArticleCommentRequest {
+  string operationID = 1;
+  int64 commentID = 2;
+  string userID = 3;
+}
+
+message officialLikeArticleCommentRequest {
+  string operationID = 1;
+  int64 commentID = 2;
+  string userID = 3;
+}
+
+message officialUnlikeArticleCommentRequest {
+  string operationID = 1;
+  int64 commentID = 2;
+  string userID = 3;
+}
+
+message officialDeleteArticleCommentRequest {
+  string operationID = 1;
+  int64 commentID = 2;
+  string userID = 3;
+}
+
+message officialHideArticleCommentRequest {
+  string operationID = 1;
+  int64 commentID = 2;
+  string userID = 3;
+}
+
+message officialShowArticleCommentRequest {
+  string operationID = 1;
+  int64 commentID = 2;
+  string userID = 3;
+}
+
+message deleteArticleLikeRequest {
+  string operationID = 1;
+  int64 articleID = 2;
+  string userID = 3;
+  string opUserID = 4;
+}
+
+message addArticleCommentRequest {
+  string operationID = 1;
+  int64 articleID = 2;
+  string userID = 3;
+  string opUserID = 4;
+  string content = 5;
+  int64 parentCommentID = 6;
+  string replyUserID = 7;
+  int64 replyOfficialID = 8;
+}
+
+message addArticleCommentResponse {
+  commonResponse commonResp = 1;
+  int64 commentID = 2;
+}
+
+message userArticleSummary {
+  int64 articleID = 1;
+  string title = 2;
+  string coverPhoto = 3;
+  string textContent = 4;
+  int64 readCounts = 5;
+  int64 uniqueReadCounts = 6;
+  int64 LikeCounts = 7;
+  int64 commentCounts = 8;
+  int64 repostCounts = 9;
+  int64 createTime = 10;
+}
+
+message listArticlesTimeLineRequest {
+  string operationID = 1;
+  int32 source = 2;
+  string userID = 3;
+  int64 officialID = 4;
+  int64 offset = 5;
+  int64 limit = 6;
+}
+
+message listArticlesTimeLineResponseEntry {
+  userArticleSummary article = 1;
+  UserFollow official = 2;
+}
+
+message  listArticlesTimeLineResponse {
+  commonResponse commonResp = 1;
+  repeated listArticlesTimeLineResponseEntry entries = 2;
+  int64 count = 3;
+}
+
+message ArticleLikeResponse{
+  int64 ArticleID = 1;
+  string UserID = 2;
+  string UserName = 3;
+  string UserProfileImg = 4;
+  string CreateBy = 5;
+  int64 CreateTime = 6;
+  string UpdateBy = 7;
+  int64 UpdatedTime = 8;
+  string DeletedBy = 9;
+  int64 DeleteTime = 10;
+  int32 Status = 11;
+}
+
+
+message ArticleCommentResp {
+  int64 ArticleID = 1;
+  string CommentID = 2;
+  string UserID = 3;
+  string UserName = 4;
+  string UserProfileImg = 5;
+  string CommentContent = 6;
+  string CommentParentID = 7;
+  string CreateBy = 8;
+  int64 CreateTime = 9;
+  string UpdateBy = 10;
+  int64 UpdatedTime = 11;
+  string DeletedBy = 12;
+  int64 DeleteTime = 13;
+  int32 Status = 14;
+}
+
+message Article {
+  int64 ArticleID = 1;
+  int64 OfficialID = 2;
+  string Title = 3;
+  string CoverPhoto = 4;
+  string Content = 5;
+  string TextContent = 6;
+  string OfficialName = 7;
+  string OfficialProfileImg = 8;
+  string CreatedBy = 9;
+  int64 CreateTime = 10;
+  string UpdatedBy = 11;
+  int64 UpdateTime = 12;
+  string DeletedBy = 13;
+  int64 DeleteTime = 14;
+  int32 Status = 15;
+  int32 Privacy = 16;
+  int64 CommentCounts = 17;
+  int64 LikeCounts = 18;
+  int64 ReadCounts = 19;
+  int64 UniqueReadCounts = 20;
+  int64 RepostCounts = 21;
+  string LastLoginIp = 22;
+  string LastLoginTime = 23;
+  int32 OfficialType = 24;
+  int64 OfficialStatus = 25;
+}
+
+
+message ArticleComment {
+  int64 CommentID = 1;
+  int64 ParentCommentID = 2;
+  int64 ArticleID = 3;
+  int64 OfficialID = 4;
+  int64 CommentReplyCount = 5;
+  string Content = 6;
+  string UserID = 7;
+  string UserName = 8;
+  string UserProfileImg = 9;
+  string CreatedBy = 10;
+  int64 CreateTime = 11;
+  string UpdatedBy = 12;
+  int64 UpdateTime = 13;
+  string DeletedBy = 14;
+  int64 DeleteTime = 15;
+  int32 Status = 16;
+  string ArticleTitle = 17;
+
+  int32 OfficialType = 18;
+  string OfficialName = 19;
+  string LastLoginTime = 20;
+  string LastLoginIp = 21;
+  string CoverPhoto = 22;
+
+  int64 PostTime = 23;
+  int64 CommentLikes = 24;
+}
+
+message ArticleLike {
+  int64 ArticleID = 1;
+  string UserID = 2;
+  string UserName = 3;
+  string UserProfileImg = 4;
+  string CreatedBy = 5;
+  int64 CreateTime = 6;
+  string UpdatedBy = 7;
+  int64 UpdateTime = 8;
+  string DeletedBy = 9;
+  int64 DeleteTime = 10;
+  int32 Status = 11;
+  string ArticleTitle = 12;
+  string OfficialName = 13;
+  int32 OfficialType = 14;
+  string LastLoginIp = 15;
+  string LastLoginTime = 16;
+  string CoverPhoto = 17;
+  int64 PostTime = 18;
+}
+
+message ArticleRepost {
+  string MomentId = 1;
+  string ShareUser = 2;
+  int32 OfficialType = 3;
+  string ArticleTitle = 4;
+  string OriginalUser = 5;
+  int64 CommentCounts = 6;
+  int64 LikeCounts = 7;
+  int64 ShareTime = 8;
+  string LastLoginIp = 9;
+  int32 Privacy = 10;
+  string CoverPhoto = 11;
+  string DeletedBy = 12;
+  int64 DeleteTime = 13;
+  int64 ArticleId = 14;
+}
+
+message GetNewsReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string OfficialAccount = 3;
+  int32 AccountType = 4;
+  string Ip = 5;
+  int32 TimeType = 6;
+  string StartTime = 7;
+  string EndTime = 8;
+  string Title = 9;
+  string OrderBy = 10;
+}
+
+message GetNewsResp {
+  commonResponse  CommonResp = 1;
+  repeated Article Articles = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 ArticlesNums = 4;
+}
+
+message DeleteNewsReq {
+  string OpUserId = 1;
+  string OperationID = 2;
+  repeated int64 Articles = 3;
+}
+
+message DeleteNewsResp {
+  commonResponse CommonResp = 1;
+}
+
+message AlterNewsReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  int64 ArticleId = 3;
+  string Title = 4;
+  string Content = 5;
+  string TextContent = 6;
+}
+
+message AlterNewsResp {
+  commonResponse  CommonResp = 1;
+}
+
+message ChangePrivacyReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  int64 ArticleId = 3;
+  int32 Privacy = 5;
+}
+
+message ChangePrivacyResp {
+  commonResponse CommonResp = 1;
+}
+
+message GetNewsCommentsReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string OfficialAccount = 3;
+  int32 AccountType = 4;
+  string Ip = 5;
+  int32 TimeType = 6;
+  string StartTime = 7;
+  string EndTime = 8;
+  string Title = 9;
+  string OrderBy = 10;
+  string CommentUser = 11;
+  string CommentKey = 12;
+  int64 ArticleId = 13;
+}
+
+message GetNewsCommentsResp {
+  commonResponse  CommonResp = 1;
+  repeated ArticleComment Comments = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 CommentsNums = 4;
+}
+
+message RemoveNewsCommentsReq {
+  string OpUserId = 1;
+  string OperationID = 2;
+  repeated int64 Comments = 3;
+  repeated string Parents = 4;
+  repeated int64 Articles = 5;
+}
+
+message RemoveNewsCommentsResp {
+  commonResponse CommonResp = 1;
+}
+
+message AlterNewsCommentReq {
+  string OpUserId = 1;
+  string OperationID = 2;
+  string UserId = 3;
+  string CommentId = 4;
+  string Content = 5;
+}
+
+message AlterNewsCommentResp {
+  commonResponse CommonResp = 1;
+}
+
+message ChangeNewsCommentStatusReq {
+  string OpUserId = 1;
+  string OperationID = 2;
+  int64 CommentId = 3;
+  int32 Status = 4;
+}
+
+message ChangeNewsCommentStatusResp {
+  commonResponse CommonResp = 1;
+}
+
+message GetNewsLikesReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string OfficialAccount = 3;
+  int32 AccountType = 4;
+  string Ip = 5;
+  string Title = 6;
+  int32 TimeType = 7;
+  string StartTime = 8;
+  string EndTime = 9;
+  string LikeUser = 10;
+  string OrderBy = 11;
+  int64 ArticleId = 12;
+}
+
+message GetNewsLikesResp {
+  commonResponse CommonResp = 1;
+  repeated ArticleLike Likes = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 LikeNums = 4;
+}
+
+message RemoveNewsLikesReq {
+  string OpUserId = 1;
+  string OperationID = 2;
+  repeated int64 Articles = 3;
+  repeated string UserIds = 4;
+}
+
+message RemoveNewsLikesResp {
+  commonResponse CommonResp = 1;
+}
+
+message ChangeNewsLikeStatusReq {
+  string OperationID = 1;
+  int64 ArticleId = 2;
+  string UserId = 3;
+  int32 Status = 4;
+  string OpUserId = 5;
+}
+
+message ChangeNewsLikeStatusResp {
+  commonResponse CommonResp = 1;
+}
+
+message GetRepostArticlesReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string RepostUser = 3;
+  int32 AccountType = 4;
+  string Ip = 5;
+  string Title = 6;
+  int32 TimeType = 7;
+  string StartTime = 8;
+  string EndTime = 9;
+  string OrderBy = 10;
+  string OriginalUser = 11;
+  int64 ArticleId = 12;
+}
+
+message GetRepostArticlesResp {
+  commonResponse  CommonResp = 1;
+  repeated ArticleRepost reposts = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+  int32 RepostNums = 4;
+}
+
+message CreateArticleReq {
+  string OperationID = 1;
+  string UserID = 2;
+  string coverPhoto = 3;
+  string Title = 4;
+  string TextContent = 5;
+  string Content = 6;
+}
+
+message UpdateArticleReq {
+  string OperationID = 1;
+  int64 ArticleID = 2;
+  string UserID = 3;
+  string coverPhoto = 4;
+  string Title = 5;
+  string TextContent = 6;
+  string Content = 7;
+}
+
+message DeleteArticleReq {
+  string OperationID = 1;
+  int64 ArticleID = 2;
+  string UserID = 3;
+}
+
+message ListOfficialArticlesReq {
+  string OperationID = 1;
+  string UserID = 2;
+  int64 MinCreateTime = 3;
+  int32 Offset = 4;
+  int32 Limit = 5;
+}
+
+message articleSummary {
+  int64 articleID = 1;
+  string title = 2;
+  string coverPhoto = 3;
+  string textContent = 4;
+  int64 readCounts = 5;
+  int64 uniqueReadCounts = 6;
+  int64 likeCounts = 7;
+  int64 commentCounts = 8;
+  int64 repostCounts = 9;
+  int64 createTime = 10;
+}
+
+message ListOfficialArticlesResp {
+  commonResponse commonResp = 1;
+  int64 count = 2;
+  repeated articleSummary articles = 3;
+}
+
+message GetOfficialArticleReq {
+  string OperationID = 1;
+  int64 ArticleID = 2;
+}
+
+message GetOfficialArticleResp {
+  commonResponse  CommonResp = 1;
+  Article article = 2;
+}
+
+message listSelfOfficialFollowsRequest {
+  string OperationID = 1;
+  string UserID = 2;
+  int64 MinFollowTime = 3;
+  int64 MinBlockTime = 4;
+  optional bool blockFilter = 5;
+  int32 OrderBy = 6;
+  int32 Offset = 7;
+  int32 Limit = 8;
+}
+
+message officialFollowEntry {
+  string userID = 1;
+  string faceURL = 2;
+  string nickname = 3;
+  int32 gender = 4;
+  int64 followTime = 5;
+  int64 blockTime = 6;
+}
+
+message listSelfOfficialFollowsResponse {
+  commonResponse  CommonResp = 1;
+  int64 count = 2;
+  repeated officialFollowEntry follows = 3;
+}
+
+message listArticleLikesRequest {
+  string operationID = 1;
+  int64 articleID = 2;
+  string keyword = 3;
+  int64 minCreateTime = 4;
+  int32 offset = 5;
+  int32 limit = 6;
+}
+
+message articleLikeEntry {
+  string userID = 1;
+  string nickname = 2;
+  string faceURL = 3;
+  int32 gender = 4;
+  int64 createTime = 5;
+}
+
+message listArticleLikesResponse {
+  commonResponse  CommonResp = 1;
+  int64 count = 2;
+  repeated articleLikeEntry likes = 3;
+}
+
+message listArticleCommentsRequest {
+  string operationID = 1;
+  int64 articleID = 2;
+  string userID = 3;
+  int32 offset = 4;
+  int32 limit = 5;
+  int32 replyLimit = 6;
+}
+
+message commentEntry {
+  int64 CommentID = 1;
+  int64 ParentCommentID = 2;
+  string UserID = 3;
+  string UserNickname = 4;
+  string UserFaceURL = 5;
+  int64 OfficialID = 6;
+  string OfficialNickname = 7;
+  string OfficialFaceURL = 8;
+  int64 ReplyCommentID = 9;
+  string ReplyUserID = 10;
+  string ReplyUserNickname = 11;
+  string ReplyUserFaceURL = 12;
+  int64 ReplyOfficialID = 13;
+  string ReplyOfficialNickname = 14;
+  string ReplyOfficialFaceURL = 15;
+  int64 ReplyCounts = 16;
+  int64 LikeCounts = 17;
+  string Content = 18;
+  int64 CreateTime = 19;
+  int64 LikeTime = 20;
+  int32 Status = 21;
+}
+
+message listArticleCommentRepliesResponse {
+  commonResponse CommonResp = 1;
+  repeated commentEntry replies = 2;
+  int64 count = 3;
+}
+
+message articleCommentEntry {
+  commentEntry comment = 1;
+  listArticleCommentRepliesResponse replies = 2;
+}
+
+message listArticleCommentsResponse {
+  commonResponse CommonResp = 1;
+  int64 count = 2;
+  repeated articleCommentEntry comments = 3;
+}
+
+message listArticleCommentRepliesRequest {
+  string operationID = 1;
+  int64 parentCommentID = 2;
+  string userID = 3;
+  int32 offset = 4;
+  int32 limit = 5;
+}
+
+message listUserArticleCommentsRequest {
+  string operationID = 1;
+  int64 articleID = 2;
+  string userID = 3;
+  int64 offset = 4;
+  int64 limit = 5;
+}
+
+message userArticleCommentEntry {
+  commentEntry comment = 1;
+  commentEntry topReply = 2;
+}
+
+message listUserArticleCommentsResponse {
+  commonResponse CommonResp = 1;
+  int64 count = 2;
+  repeated userArticleCommentEntry comments = 3;
+}
+
+message listUserArticleCommentRepliesRequest {
+  string operationID = 1;
+  int64 commentID = 2;
+  string userID = 3;
+  int64 offset = 4;
+  int64 limit = 5;
+}
+
+message listUserArticleCommentRepliesResponse {
+  commonResponse CommonResp = 1;
+  int64 count = 2;
+  repeated commentEntry comments = 3;
+}
+
+message getUserFollowListRequest {
+  string operationID = 1;
+  string userID = 2;
+  int32 offset = 3;
+  int32 limit = 4;
+  string keyword = 5;
+}
+
+message UserFollow {
+  int64 officialID = 1;
+  string nickname = 2;
+  string faceURL = 3;
+  string bio = 4;
+  int32 type = 5;
+  int64 followTime = 6;
+  bool muted = 7;
+  bool enabled = 8;
+}
+
+message getUserFollowListResponse {
+  commonResponse CommonResp = 1;
+  int64 count = 2;
+  repeated UserFollow follows = 3;
+}
+
+message getOfficialProfileRequest {
+  string operationID = 1;
+  string userID = 2;
+  int64 officialID = 3;
+}
+
+message getOfficialProfileResponse {
+  commonResponse CommonResp = 1;
+  UserFollow follow = 2;
+}
+
+message getOfficialRecentAnalyticsByGenderRequest {
+  string operationID = 1;
+  string userID = 2;
+  int64 startTime = 3;
+  int64 endTime = 4;
+}
+
+message recentAnalyticsEntryGender {
+  int64 unknown = 1;
+  int64 male = 2;
+  int64 female = 3;
+}
+
+message recentAnalyticsEntry {
+  recentAnalyticsEntryGender likesByGender = 1;
+  recentAnalyticsEntryGender commentsByGender = 2;
+  recentAnalyticsEntryGender followsByGender = 3;
+  recentAnalyticsEntryGender readsByGender = 4;
+  recentAnalyticsEntryGender uniqueReadsByGender = 5;
+}
+
+message getOfficialRecentAnalyticsByGenderResponse {
+  commonResponse CommonResp = 1;
+  recentAnalyticsEntry current = 2;
+  recentAnalyticsEntry previous = 3;
+}
+
+
+message getOfficialAnalyticsByDayRequest {
+  string operationID = 1;
+  string userID = 2;
+  int64 startTime = 3;
+  int64 endTime = 4;
+}
+
+message analyticsByDayEntry {
+  int64 day = 1;
+  int64 likes = 2;
+  int64 comments = 3;
+  int64 follows = 4;
+  int64 reads = 5;
+  int64 unique_reads = 6;
+}
+
+message getOfficialAnalyticsByDayResponse {
+  commonResponse CommonResp = 1;
+  repeated analyticsByDayEntry entries = 2;
+}
+
+message searchOfficialAccountsRequest {
+  string operationID = 1;
+  string userID = 2;
+  string keyword = 3;
+  int32 offset = 4;
+  int32 limit = 5;
+}
+
+message searchOfficialAccountsResponse {
+  commonResponse commonResp = 1;
+  repeated UserFollow entries = 2;
+  int64 count = 3;
+}
+
+message searchArticlesRequest {
+  string operationID = 1;
+  string userID = 2;
+  string keyword = 3;
+  int64 officialID = 4;
+  int64 minReadTime = 5;
+  int64 maxReadTime = 6;
+  int64 minCreateTime = 7;
+  int64 maxCreateTime = 8;
+  int64 sort = 9;
+  int64 offset = 10;
+  int64 limit = 11;
+}
+
+message searchArticlesEntry {
+  userArticleSummary article = 1;
+  UserFollow official = 2;
+  int64 readTime = 3;
+}
+
+message searchArticlesResponse {
+  commonResponse commonResp = 1;
+  repeated searchArticlesEntry entries = 2;
+  int64 count = 3;
+}
+
+message getUserArticleByArticleIDRequest {
+  string operationID = 1;
+  int64 articleID = 2;
+  optional string userID = 4;
+}
+
+message insertArticleReadRequest {
+  string operationID = 1;
+  int64 articleID = 2;
+  string userID = 4;
+}
+
+message UserArticle {
+  int64 articleID = 1;
+  string title = 2;
+  string coverPhoto = 3;
+  string textContent = 4;
+  string content = 5;
+  int64 readCounts = 6;
+  int64 uniqueReadCounts = 7;
+  int64 commentCounts = 8;
+  int64 repostCounts = 9;
+  int64 createTime = 10;
+  int64 likeTime = 11;
+  int64 favoriteTime = 12;
+  string favoriteID = 13;
+}
+
+message getUserArticleByArticleIDResponse {
+  commonResponse commonResp = 1;
+  UserArticle article = 2;
+  UserFollow official = 3;
+}
+
+message listUserArticleReadsRequest {
+  string OperationID = 1;
+  string UserID = 2;
+  int64 MinCreateTime = 3;
+  int64 Offset = 4;
+  int64 Limit = 5;
+}
+
+message listUserArticleReadsResponseEntry {
+  userArticleSummary article = 1;
+  UserFollow official = 2;
+  int64 readTime = 3;
+}
+
+message listUserArticleReadsResponse {
+  commonResponse commonResp = 1;
+  repeated listUserArticleReadsResponseEntry entries = 2;
+  int64 count = 3;
+}
+
+message clearUserArticleReadsRequest {
+  string OperationID = 1;
+  string UserID = 2;
+}
+
+
+message DeleteArticleCommentRequest {
+  string operationID = 1;
+  int64 CommentID = 2;
+  string ReqUserID = 3;
+}
+
+message FollowedOfficialConversationRequest {
+  string OperationID = 1;
+  string ReqUserID = 2;
+}
+
+message FollowedOfficialConversationResponse {
+  string OperationID = 1;
+  repeated Article articles = 2;
+}
+
+message GetOfficialIDNumberAvailabilityRequest {
+  string OperationID = 1;
+  string IDNumber = 2;
+  int32 IDType = 3;
+}
+
+message GetOfficialIDNumberAvailabilityResponse {
+  commonResponse  CommonResp = 1;
+  string IDNumber = 2;
+  bool IsAvailable = 3;
+}
+
+message OfficialFollowers {
+  int64 OfficialID = 1;
+  string OfficialName = 2;
+  string UserID = 3;
+  string Username = 4;
+  int64 FollowTime = 5;
+  string DeletedBy = 6;
+  int64 BlockTime = 7;
+  bool Muted = 8;
+  bool Enabled = 9;
+}
+
+message GetOfficialFollowersReq {
+  server_api_params.RequestPagination Pagination = 1;
+  string OperationID = 2;
+  string StartTime = 3;
+  string EndTime = 4;
+  string OfficialAccount = 5;
+  string User = 6;
+  int32 Muted = 7;
+}
+
+message GetOfficialFollowersResp {
+  commonResponse CommResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated OfficialFollowers OfficialFollowers = 3;
+  int64 OfficialFollowersCount = 4;
+}
+
+message BlockFollowerReq {
+  string OperationID = 1;
+  int32 Block = 2;
+  int64 OfficialID = 3;
+  string UserID = 4;
+  string OpUserID = 5;
+}
+
+message BlockFollowerResp {
+  commonResponse CommResp = 1;
+}
+
+message MuteFollowerReq {
+  string OperationID = 1;
+  int32 Mute = 2;
+  int64 OfficialID = 3;
+  string UserID = 4;
+  string OpUserID = 5;
+}
+
+message MuteFollowerResp {
+  commonResponse CommResp = 1;
+}
+
+message UsersAutoGenerate {
+  int64 OfficialID = 1;
+  string UserID = 2;
+}
+
+message RemoveFollowersReq {
+  string OperationID = 1;
+  repeated UsersAutoGenerate Users = 2;
+  string OpUserID = 3;
+}
+
+message RemoveFollowersResp {
+  commonResponse CommResp = 1;
+}
+
+service news {
+  rpc registerOfficial(registerOfficialRequest)returns(commonResponse);
+  rpc getSelfOfficialInfo(getSelfOfficialInfoRequest)returns(getSelfOfficialInfoResponse);
+  rpc setSelfOfficialInfo(setSelfOfficialInfoRequest)returns(commonResponse);
+  rpc followOfficialAccount(followOfficialAccountRequest)returns(commonResponse);
+  rpc unfollowOfficialAccount(unfollowOfficialAccountRequest)returns(commonResponse);
+  rpc updateOfficialFollowSettings(UpdateOfficialFollowSettingsRequest)returns(commonResponse);
+  rpc getOfficialFollowSettingsByOfficialID(OfficialFollowSettingsByOfficialIDRequest)returns(OfficialFollowSettingsByOfficialIDResponse);
+  rpc getUserFollowList(getUserFollowListRequest)returns(getUserFollowListResponse);
+  rpc blockOfficialFollows(blockOfficialFollowsRequest)returns(commonResponse);
+  rpc unblockOfficialFollows(unblockOfficialFollowsRequest)returns(commonResponse);
+  rpc deleteOfficialFollows(deleteOfficialFollowsRequest)returns(commonResponse);
+  rpc likeArticle(likeArticleRequest)returns(commonResponse);
+  rpc unlikeArticle(unlikeArticleRequest)returns(commonResponse);
+  rpc deleteArticleLike(deleteArticleLikeRequest)returns(commonResponse);
+  rpc addArticleComment(addArticleCommentRequest)returns(addArticleCommentResponse);
+  rpc listArticlesTimeLine(listArticlesTimeLineRequest)returns(listArticlesTimeLineResponse);
+  rpc likeArticleComment(likeArticleCommentRequest)returns(commonResponse);
+  rpc unlikeArticleComment(unlikeArticleCommentRequest)returns(commonResponse);
+  rpc officialLikeArticleComment(officialLikeArticleCommentRequest)returns(commonResponse);
+  rpc officialUnlikeArticleComment(officialUnlikeArticleCommentRequest)returns(commonResponse);
+  rpc officialDeleteArticleComment(officialDeleteArticleCommentRequest)returns(commonResponse);
+  rpc officialHideArticleComment(officialHideArticleCommentRequest)returns(commonResponse);
+  rpc officialShowArticleComment(officialShowArticleCommentRequest)returns(commonResponse);
+  rpc DeleteArticleComment(DeleteArticleCommentRequest)returns(commonResponse);
+
+  rpc GetOfficialAccounts(GetOfficialAccountsReq)returns(GetOfficialAccountsResp);
+  rpc DeleteOfficialAccounts(DeleteOfficialAccountsReq)returns(DeleteOfficialAccountsResp);
+  rpc AlterOfficialAccount(AlterOfficialAccountReq)returns(AlterOfficialAccountResp);
+  rpc AddOfficialAccount(AddOfficialAccountReq)returns(AddOfficialAccountResp);
+  rpc Process(ProcessReq)returns(ProcessResp);
+
+  rpc GetNews(GetNewsReq)returns(GetNewsResp);
+  rpc DeleteNews(DeleteNewsReq)returns(DeleteNewsResp);
+  rpc AlterNews(AlterNewsReq)returns(AlterNewsResp);
+  rpc ChangePrivacy(ChangePrivacyReq)returns(ChangePrivacyResp);
+
+  rpc GetNewsComments(GetNewsCommentsReq)returns(GetNewsCommentsResp);
+  rpc RemoveNewsComments(RemoveNewsCommentsReq)returns(RemoveNewsCommentsResp);
+  rpc AlterNewsComment(AlterNewsCommentReq)returns(AlterNewsCommentResp);
+  rpc ChangeNewsCommentStatus(ChangeNewsCommentStatusReq)returns(ChangeNewsCommentStatusResp);
+
+  rpc GetNewsLikes(GetNewsLikesReq)returns(GetNewsLikesResp);
+  rpc RemoveNewsLikes(RemoveNewsLikesReq)returns(RemoveNewsLikesResp);
+  rpc ChangeNewsLikeStatus(ChangeNewsLikeStatusReq)returns(ChangeNewsLikeStatusResp);
+
+  rpc GetRepostArticles(GetRepostArticlesReq)returns(GetRepostArticlesResp);
+  rpc CreateArticle(CreateArticleReq)returns(commonResponse);
+  rpc UpdateArticle(UpdateArticleReq)returns(commonResponse);
+  rpc DeleteArticle(DeleteArticleReq)returns(commonResponse);
+  rpc ListOfficialArticles(ListOfficialArticlesReq)returns(ListOfficialArticlesResp);
+  rpc GetOfficialArticle(GetOfficialArticleReq)returns(GetOfficialArticleResp);
+  rpc listSelfOfficialFollows(listSelfOfficialFollowsRequest)returns(listSelfOfficialFollowsResponse);
+  rpc listArticleLikes(listArticleLikesRequest)returns(listArticleLikesResponse);
+  rpc listArticleComments(listArticleCommentsRequest)returns(listArticleCommentsResponse);
+  rpc listArticleCommentReplies(listArticleCommentRepliesRequest)returns(listArticleCommentRepliesResponse);
+  rpc getOfficialProfile(getOfficialProfileRequest)returns(getOfficialProfileResponse);
+  rpc getOfficialRecentAnalyticsByGender(getOfficialRecentAnalyticsByGenderRequest)returns(getOfficialRecentAnalyticsByGenderResponse);
+  rpc getOfficialAnalyticsByDay(getOfficialAnalyticsByDayRequest)returns(getOfficialAnalyticsByDayResponse);
+  rpc searchOfficialAccounts(searchOfficialAccountsRequest)returns(searchOfficialAccountsResponse);
+  rpc searchArticles(searchArticlesRequest)returns(searchArticlesResponse);
+  rpc getUserArticleByArticleID(getUserArticleByArticleIDRequest)returns(getUserArticleByArticleIDResponse);
+  rpc insertArticleRead(insertArticleReadRequest)returns(commonResponse);
+  rpc listUserArticleReads(listUserArticleReadsRequest)returns(listUserArticleReadsResponse);
+  rpc clearUserArticleReads(clearUserArticleReadsRequest)returns(commonResponse);
+  rpc listUserArticleComments(listUserArticleCommentsRequest)returns(listUserArticleCommentsResponse);
+  rpc listUserArticleCommentReplies(listUserArticleCommentRepliesRequest)returns(listUserArticleCommentRepliesResponse);
+  rpc FollowedOfficialConversation(FollowedOfficialConversationRequest)returns(FollowedOfficialConversationResponse);
+  rpc GetOfficialIDNumberAvailability(GetOfficialIDNumberAvailabilityRequest)returns(GetOfficialIDNumberAvailabilityResponse);
+
+  rpc GetOfficialFollowers(GetOfficialFollowersReq)returns(GetOfficialFollowersResp);
+  rpc BlockFollower(BlockFollowerReq)returns(BlockFollowerResp);
+  rpc MuteFollower(MuteFollowerReq)returns(MuteFollowerResp);
+  rpc RemoveFollowers(RemoveFollowersReq)returns(RemoveFollowersResp);
+}
+
+

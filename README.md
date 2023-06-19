@@ -1,92 +1,160 @@
-# Server
+# Open-IM-Server 
+![avatar](https://github.com/OpenIMSDK/OpenIM-Docs/blob/main/docs/images/WechatIMG20.jpeg)
 
+![avatar](https://github.com/OpenIMSDK/Open-IM-Server/blob/main/docs/open-im-logo.png)
 
+[![LICENSE](https://img.shields.io/badge/license-Apache--2.0-green)](https://github.com/OpenIMSDK/Open-IM-Server/blob/main/LICENSE) [![Language](https://img.shields.io/badge/Language-Go-blue.svg)](https://golang.org/)
 
-## Getting started
+## Open-IM-Server: Open source Instant Messaging Server
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Instant messaging server. Backend in pure Golang, wire transport protocol is JSON over websocket.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+Everything is a message in Open-IM-Server, so you can extend custom messages easily, there is no need to modify the server code.
 
-## Add your files
+Using microservice architectures, Open-IM-Server can be deployed using clusters.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+By deployment of the Open-IM-Server on the customer's server, developers can integrate instant messaging and real-time network capabilities into their own applications free of charge and quickly, and ensure the security and privacy of business data.
 
-```
-cd existing_repo
-git remote add origin http://192.168.0.251/client/xlink/server.git
-git branch -M main
-git push -uf origin main
-```
+## Features
 
-## Integrate with your tools
+- Everything in Free
+- Scalable architecture
+- Easy integration
+- Good scalability
+- High performance
+- Lightweight
+- Supports multiple protocols
 
-- [ ] [Set up project integrations](http://192.168.0.251/client/xlink/server/-/settings/integrations)
+## Community
 
-## Collaborate with your team
+- Join the Telegram-OpenIM group: https://t.me/joinchat/zSJLPaHBNLZmODI1
+- 中文官网访问这里：[Open-IM中文开发文档](https://doc.rentsoft.cn/)
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+## Quick start
 
-## Test and Deploy
+### Installing Open-IM-Server
 
-Use the built-in continuous integration in GitLab.
+> Open-IM relies on five open source high-performance components: ETCD, MySQL, MongoDB, Redis, and Kafka. Privatization deployment Before Open-IM-Server, please make sure that the above five components have been installed. If your server does not have the above components, you must first install Missing components. If you have the above components, it is recommended to use them directly. If not, it is recommended to use Docker-compose, no To install dependencies, one-click deployment, faster and more convenient.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+#### Source code deployment
 
-***
+1. Install [Go environment](https://golang.org/doc/install). Make sure Go version is at least 1.15.
 
-# Editing this README
+2. Clone the Open-IM project to your server.
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+   ```
+   git clone https://github.com/OpenIMSDK/Open-IM-Server.git --recursive
+   ```
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+3. Build and start Service.
 
-## Name
-Choose a self-explaining name for your project.
+    1. Shell authorization
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+       ```
+       #cd Open-IM-server/script
+       
+       chmod +x *.sh
+       ```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+    2. Execute the build shell
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+       ```
+       ./build_all_service.sh
+       ```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+    3. Start service
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+       ```
+       ./start_all.sh
+       ```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+    4. Check service
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+       ```
+       ./check_all.sh
+       ```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+       ![OpenIMServersonSystempng](https://github.com/OpenIMSDK/Open-IM-Server/blob/main/docs/Open-IM-Servers-on-System.png)
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+#### Docker deployment
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+All images are available at https://hub.docker.com/r/lyt1123/open_im_server
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+1. [Install Docker](https://docs.docker.com/install/) 1.13 or above.
+
+2. [Install Docker Compose](https://docs.docker.com/compose/install/) 1.22 or above.
+
+3. Clone the Open-IM project to your server.
+
+   ```
+   git clone https://github.com/OpenIMSDK/Open-IM-Server.git --recursive
+   ```
+
+4. Start docker-compose with one click(Docker automatically pulls all images)
+
+   ```
+   cd Open-IM-Server
+   docker-compose up -d
+   ```
+
+5. Check service
+
+   ```
+   ./docker_check_service.sh 
+   ./check_all.sh
+   ```
+
+   ![OpenIMServersondockerpng](https://github.com/OpenIMSDK/Open-IM-Server/blob/main/docs/Open-IM-Servers-on-docker.png)
+
+### CONFIGURATION INSTRUCTIONS
+
+> Open-IM configuration is divided into basic component configuration and business internal service configuration. Developers need to fill in the address of each component as the address of their server component when using the product, and ensure that the internal service port of the business is not occupied
+
+#### Basic Component Configuration Instructions
+
+- ETCD
+    - Etcd is used for the discovery and registration of rpc services, etcd Schema is the prefix of the registered name, it is recommended to modify it to your company name, etcd address (ip+port) supports clustered deployment, you can fill in multiple ETCD addresses separated by commas, and also only one etcd address.
+- MySQL
+    - mysql is used for full storage of messages and user relationships. Cluster deployment is not supported for the time being. Modify addresses and users, passwords, and database names.
+- Mongo
+    - Mongo is used for offline storage of messages. The default storage is 7 days. Cluster deployment is temporarily not supported. Just modify the address and database name.
+- Redis
+    - Redis is currently mainly used for message serial number storage and user token information storage. Cluster deployment is temporarily not supported. Just modify the corresponding redis address and password.
+- Kafka
+    - Kafka is used as a message transfer storage queue to support cluster deployment, just modify the corresponding address
+
+#### Internal Service Configuration Instructions
+
+- credential&&push
+    - The Open-IM needs to use the three-party offline push function. Currently, Tencent's three-party push is used. It supports IOS, Android and OSX push. This information is some registration information pushed by Tencent. Developers need to go to Tencent Cloud Mobile Push to register the corresponding information. If you do not fill in the corresponding information, you cannot use the offline message push function
+- api&&rpcport&&longconnsvr&&rpcregistername
+    - The api port is the http interface, longconnsvr is the websocket listening port, and rpcport is the internal service startup port. Both support cluster deployment. Make sure that these ports are not used. If you want to open multiple services for a single service, fill in multiple ports separated by commas. rpcregistername is the service name registered by each service to the registry etcd, no need to modify
+- log&&modulename
+    - The log configuration includes the storage path of the log file, and the log is sent to elasticsearch for log viewing. Currently, the log is not supported to be sent to elasticsearch. The configuration does not need to be modified for the time being. The modulename is used to split the log according to the name of the service module. The default configuration is fine.
+- multiloginpolicy&&tokenpolicy
+    - Open-IM supports multi-terminal login. Currently, there are three multi-terminal login policies. The PC terminal and the mobile terminal are online at the same time by default. When multiple policies are configured to be true, the first policy with true is used by default, and the token policy is the generated token policy. , The developer can customize the expiration time of the token
+
+### SCRIPT DESCRIPTION
+
+> Open-IM script provides service compilation, start, and stop scripts. There are four Open-IM script start modules, one is the http+rpc service start module, the second is the websocket service start module, then the msg_transfer module, and the last is the push module
+
+- path_info.cfg&&style_info.cfg&&functions.sh
+    - Contains the path information of each module, including the path where the source code is located, the name of the service startup, the shell print font style, and some functions for processing shell strings
+- build_all_service.sh
+    - Compile the module, compile all the source code of Open-IM into a binary file and put it into the bin directory
+- start_rpc_api_service.sh&&msg_gateway_start.sh&&msg_transfer_start.sh&&push_start.sh
+    - Independent script startup module, followed by api and rpc modules, message gateway module, message transfer module, and push module
+- start_all.sh&&stop_all.sh
+    - Total script, start all services and close all services
+
+## Authentication Clow Chart 
+
+![avatar](https://github.com/OpenIMSDK/Open-IM-Server/blob/main/docs/open-im-server.png)
+
+## Architecture
+
+![avatar](https://github.com/OpenIMSDK/Open-IM-Server/blob/main/docs/Architecture.jpg)
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Open-IM-Server is under the Apache 2.0 license. See the [LICENSE](https://github.com/OpenIMSDK/Open-IM-Server/blob/main/LICENSE) file for details

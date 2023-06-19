@@ -1,0 +1,507 @@
+syntax = "proto3";
+import "server/pkg/proto/sdk_ws/ws.proto";
+option go_package = "./office;office";
+package office;
+
+message CommonResp{
+  int32  errCode = 1;
+  string errMsg = 2;
+}
+
+message TagUser {
+  string userID = 1;
+  string userName = 2;
+}
+
+message Tag {
+  string tagID = 1;
+  string tagName = 2;
+  repeated TagUser userList = 3;
+}
+
+message GetUserTagsReq{
+  string userID = 1;
+  string operationID = 2;
+}
+
+message GetUserTagsResp{
+  CommonResp commonResp = 1;
+  repeated Tag tags = 2;
+}
+
+message CreateTagReq {
+  string tagName = 1;
+  string userID = 2;
+  repeated string userIDList = 3;
+  string operationID = 4;
+}
+
+message CreateTagResp {
+  CommonResp commonResp = 1;
+}
+
+message DeleteTagReq {
+  string userID = 1;
+  string tagID = 2;
+  string operationID = 3;
+}
+
+message DeleteTagResp {
+  CommonResp commonResp = 1;
+}
+
+message SetTagReq {
+ string userID = 1;
+ string tagID = 2;
+ string newName = 3;
+ repeated string increaseUserIDList = 4;
+ repeated string reduceUserIDList = 5;
+ string operationID = 6;
+}
+
+message SetTagResp {
+  CommonResp commonResp = 1;
+}
+
+message SendMsg2TagReq {
+  repeated string tagList = 1;
+  repeated string UserList = 2;
+  repeated string GroupList = 3;
+  string sendID = 4;
+  int32 senderPlatformID = 5;
+  string content = 6;
+  string operationID = 7;
+}
+
+message SendMsg2TagResp {
+  CommonResp commonResp = 1;
+}
+
+message GetTagSendLogsReq {
+  server_api_params.RequestPagination Pagination = 1;
+  string userID = 2;
+  string operationID = 3;
+}
+
+message TagSendLog {
+  repeated TagUser userList = 1;
+  string content = 2;
+  int64 sendTime = 3;
+}
+
+message GetTagSendLogsResp {
+  CommonResp commonResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated TagSendLog tagSendLogs = 3;
+}
+
+message GetUserTagByIDReq {
+  string userID = 1;
+  string tagID = 2;
+  string operationID = 3;
+}
+
+message GetUserTagByIDResp {
+  CommonResp commonResp = 1;
+  Tag tag = 2;
+}
+
+/// WorkMoment
+
+message LikeUser {
+  string userID = 1;
+  string userName = 2;
+}
+
+message NotificationUser {
+  string userID = 1;
+  string userName = 2;
+}
+
+message Comment {
+  string userID = 1;
+  string userName = 2;
+  string faceURL = 3;
+  string replyUserID = 4;
+  string replyUserName = 5;
+  string contentID = 6;
+  string content = 7;
+  int32  createTime = 8;
+}
+
+message PermissionGroup {
+  string groupName = 1;
+  string groupID = 2;
+}
+
+message WorkMomentUser {
+   string userID = 1;
+   string userName = 2;
+}
+
+message WorkMoment {
+  string workMomentID = 1;
+  string userID = 2;
+  string userName = 3;
+  string faceURL = 4;
+  string content = 5;
+  repeated WorkMomentUser likeUserList = 6;
+  repeated Comment comments = 7;
+  int32 permission = 8;
+  repeated WorkMomentUser permissionUserList = 9;
+  repeated PermissionGroup permissionGroupList = 10;
+  repeated WorkMomentUser atUserList = 11;
+  int32 createTime = 12;
+}
+
+message CreateOneWorkMomentReq {
+  WorkMoment workMoment = 1;
+  string operationID = 2;
+}
+
+message CreateOneWorkMomentResp {
+  CommonResp commonResp = 1;
+}
+
+message DeleteOneWorkMomentReq {
+  string workMomentID = 1;
+  string userID = 2;
+  string operationID = 3;
+}
+
+message DeleteOneWorkMomentResp {
+  CommonResp commonResp = 1;
+}
+
+message LikeOneWorkMomentReq {
+  string userID = 1;
+  string WorkMomentID = 2;
+  string operationID = 3;
+}
+
+message LikeOneWorkMomentResp {
+  CommonResp commonResp = 1;
+}
+
+message CommentOneWorkMomentReq {
+  string userID = 1;
+  string workMomentID = 2;
+  string replyUserID = 3;
+  string content = 4;
+  string operationID = 5;
+}
+
+message CommentOneWorkMomentResp {
+  CommonResp commonResp = 1;
+}
+
+message DeleteCommentReq {
+  string workMomentID = 1;
+  string contentID = 2;
+  string opUserID = 3;
+  string operationID = 4;
+}
+
+message DeleteCommentResp {
+  CommonResp commonResp = 1;
+}
+
+message GetWorkMomentByIDReq {
+  string workMomentID = 1;
+  string opUserID = 2;
+  string operationID = 3;
+}
+
+message GetWorkMomentByIDResp {
+  CommonResp commonResp = 1;
+  WorkMoment workMoment = 2;
+}
+
+message ChangeWorkMomentPermissionReq {
+  string workMomentID = 1;
+  string opUserID = 2;
+  int32 permission = 3;
+  repeated string permissionUserIDList = 4;
+  string operationID = 5;
+}
+
+message ChangeWorkMomentPermissionResp {
+  CommonResp commonResp = 1;
+}
+
+message GetUserWorkMomentsReq {
+  string userID = 1;
+  string opUserID = 2;
+  server_api_params.RequestPagination Pagination = 3;
+  string operationID = 4;
+}
+
+message GetUserWorkMomentsResp {
+  CommonResp commonResp = 1;
+  repeated WorkMoment workMoments = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+}
+
+message GetUserFriendWorkMomentsReq {
+  string userID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string operationID = 3;
+}
+
+message GetUserFriendWorkMomentsResp {
+  CommonResp commonResp = 1;
+  repeated WorkMoment workMoments = 2;
+  server_api_params.ResponsePagination Pagination = 3;
+}
+
+message WorkMomentNotificationMsg {
+  int32 notificationMsgType = 1;
+  string replyUserName = 2;
+  string replyUserID = 3;
+  string content = 4;
+  string contentID = 5;
+  string workMomentID = 6;
+  string userID = 7;
+  string userName = 8;
+  string faceURL = 9;
+  string workMomentContent = 10;
+  int32 createTime = 11;
+}
+
+message SetUserWorkMomentsLevelReq {
+  string userID = 1;
+  int32 level = 2;
+  string operationID = 3;
+}
+
+message SetUserWorkMomentsLevelResp {
+  CommonResp commonResp = 1;
+}
+
+
+message Favorite {
+  string FavoriteId = 1;
+  int32 ContentType = 2;
+  string ExKeywords = 3;
+  string Content = 4;
+  string ContentID = 5;
+  string ContentCreatorID = 6;
+  string SourceType = 7;
+  int32 PublishTime = 8;
+  int32 CreateTime = 9;
+  string ContentCreatorName = 10;
+  string ContentGroupName = 11;
+  int64 FileSize = 12;
+  string CreateBy = 13;
+}
+
+message FavoriteManager {
+  string UserID = 1;
+  string UserName = 2;
+  int32 ContentType = 3;
+  string Content = 4;
+  int64 CreateTime = 5;
+  int64 PublishTime = 6;
+  string  Remark = 7;
+  string EditUser = 8;
+  int64 UpdateTime = 9;
+  string UpdateBy = 10;
+  string PublishUser = 12;
+  string FavoriteId = 13;
+  string ContentCreatorName = 14;
+  int64 FileSize = 15;
+  int32 SourceType = 16;
+}
+
+message AddFavoriteReq {
+  string OpUserID = 1;
+  string OperationID = 2;
+  string UserID = 3;
+  int32 ContentType = 4;
+  string ExKeywords = 5;
+  string Content = 6;
+  string ContentID = 7;
+  string ContentCreatorID = 8;
+  int32 SourceType = 9;
+  string ContentGroupID = 10;
+  int64 PublishTime = 11;
+}
+
+message AddFavoriteResp {
+  CommonResp commonResp = 1;
+}
+
+message GetFavoriteListReq {
+  string OperationID = 1;
+  string UserID = 2;
+  int32 ContentType = 3;
+}
+
+message GetFavoriteListResp {
+  CommonResp commonResp = 1;
+  repeated Favorite favorites = 2;
+}
+
+message RemoveFavoriteReq {
+  string OperationID = 1;
+  string OpUserId = 2;
+  repeated string FavoriteIds = 3;
+  string UserID = 4;
+}
+message RemoveFavoriteResp {
+  CommonResp commonResp = 1;
+}
+
+message GetFavoritesReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string Account = 3;
+  string Content = 4;
+  repeated int32 ContentType = 5;
+  string PublishUser = 6;
+  int32 TimeType = 7;
+  string StartTime = 8;
+  string EndTime = 9;
+  string OrderBy = 10;
+}
+
+message GetFavoritesResp {
+  CommonResp commonResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated FavoriteManager Favorites = 3;
+  int64 FavoriteNums = 4;
+}
+
+message AlterFavoritesReq {
+  string OperationId = 1;
+  string OpUserID = 2;
+  string UserID = 3;
+  int32 ContentType = 4;
+  string ExKeywords = 5;
+  string Content = 6;
+  string ContentID = 7;
+  int32 SourceType = 8;
+  string PublishTime = 9;
+  string FavoriteId = 12;
+  string Remark = 13;
+}
+
+message AlterFavoritesResp {
+  CommonResp commonResp = 1;
+}
+
+message Communication {
+  int64 CommunicationID = 1;
+  string Originator = 2;
+  string OriginatorName = 3;
+  string CallID = 4;
+  int32 OriginatorPlatform = 5;
+  string GroupID = 6;
+  string GroupName = 7;
+  repeated string MemberIDs = 8;
+  repeated string MemberIDNames = 9;
+  int32 Status = 10;
+  int64 Duration = 11;
+  int64 StartTime = 12;
+  int64 EndTime = 13;
+  string RecordURL = 14;
+  int32 ChatType = 15;
+  string Supporter = 16;
+  string Remark = 17;
+  string DeleteBy = 18;
+  int64 DeleteTime = 19;
+}
+
+message GetCommunicationsReq {
+  server_api_params.RequestPagination Pagination = 1;
+  string OperationID = 2;
+  string Originator = 3;
+  string  Member = 4;
+  int32 OriginatorPlatform = 5;
+  int32 ChatType  = 6;
+  int64 Duration = 7;
+  int32 TimeType = 8;
+  string StartTime = 9;
+  string  EndTime = 10;
+  int32 Status = 11;
+  string Remark = 12;
+  string OrderBy = 13;
+  int32 CommunicationType = 14;
+  string RoomID = 15;
+}
+
+message GetCommunicationsResp {
+  server_api_params.ResponsePagination Pagination = 1;
+  CommonResp commonResp = 2;
+  repeated Communication CommunicationList = 3;
+  int32 Communications = 4;
+}
+
+message DeleteCommunicationsReq {
+  string OperationID = 1;
+  string OpUserID = 2;
+  repeated int64 CommunicatIDs = 3;
+}
+message DeleteCommunicationsResp {
+  CommonResp commonResp = 1;
+}
+
+message SetRemarkReq {
+  string OperationID = 1;
+  string OpUserID = 2;
+  int64 CommunicatID = 3;
+  string Remark = 4;
+}
+message SetRemarkResp {
+  CommonResp commonResp = 1;
+}
+
+message InterruptPersonalCommunicationsReq {
+  string OperationID = 1;
+  string OpUserID = 2;
+  int64 CommunicatID = 3;
+}
+
+message InterruptPersonalCommunicationsResp {
+  CommonResp commonResp = 1;
+}
+
+service OfficeService {
+  rpc GetUserTags(GetUserTagsReq) returns(GetUserTagsResp);
+  rpc CreateTag(CreateTagReq) returns(CreateTagResp);
+  rpc DeleteTag(DeleteTagReq) returns(DeleteTagResp);
+  rpc SetTag(SetTagReq) returns(SetTagResp);
+  rpc SendMsg2Tag(SendMsg2TagReq) returns(SendMsg2TagResp);
+  rpc GetTagSendLogs(GetTagSendLogsReq) returns(GetTagSendLogsResp);
+  rpc GetUserTagByID(GetUserTagByIDReq) returns(GetUserTagByIDResp);
+
+  rpc CreateOneWorkMoment(CreateOneWorkMomentReq) returns(CreateOneWorkMomentResp);
+  rpc DeleteOneWorkMoment(DeleteOneWorkMomentReq) returns(DeleteOneWorkMomentResp);
+  rpc LikeOneWorkMoment(LikeOneWorkMomentReq) returns(LikeOneWorkMomentResp);
+  rpc CommentOneWorkMoment(CommentOneWorkMomentReq) returns(CommentOneWorkMomentResp);
+  rpc DeleteComment(DeleteCommentReq) returns(DeleteCommentResp);
+  rpc GetWorkMomentByID(GetWorkMomentByIDReq) returns(GetWorkMomentByIDResp);
+  rpc ChangeWorkMomentPermission(ChangeWorkMomentPermissionReq) returns(ChangeWorkMomentPermissionResp);
+  /// user self
+  rpc GetUserWorkMoments(GetUserWorkMomentsReq) returns(GetUserWorkMomentsResp);
+  /// users friend
+  rpc GetUserFriendWorkMoments(GetUserFriendWorkMomentsReq) returns(GetUserFriendWorkMomentsResp);
+  rpc SetUserWorkMomentsLevel(SetUserWorkMomentsLevelReq) returns(SetUserWorkMomentsLevelResp);
+
+  // user favorites
+  rpc AddFavorite(AddFavoriteReq) returns(AddFavoriteResp);
+  rpc GetFavoriteList(GetFavoriteListReq) returns(GetFavoriteListResp);
+  rpc RemoveFavorite(RemoveFavoriteReq) returns(RemoveFavoriteResp);
+
+  // cms
+  rpc GetFavorites(GetFavoritesReq) returns (GetFavoritesResp);
+  rpc AlterFavorites(AlterFavoritesReq) returns (AlterFavoritesResp);
+
+  // communication
+  rpc GetCommunications(GetCommunicationsReq) returns(GetCommunicationsResp);
+  rpc DeleteCommunications(DeleteCommunicationsReq) returns(DeleteCommunicationsResp);
+  rpc SetRemark(SetRemarkReq) returns(SetRemarkResp);
+  rpc InterruptPersonalCommunications(InterruptPersonalCommunicationsReq) returns(InterruptPersonalCommunicationsResp);
+
+}
+

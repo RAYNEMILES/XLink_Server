@@ -1,0 +1,89 @@
+syntax = "proto3";
+import "server/pkg/proto/sdk_ws/ws.proto";
+option go_package = "./local_database;local_database";
+package local_database;
+
+message CommonResp{
+  int32 ErrCode = 1;
+  string ErrMsg = 2;
+}
+
+message SyncDataMsg{
+  string MsgType = 1;
+  string UserID = 2;
+  string MsgData= 3;
+}
+
+message SyncDataReq{
+  string OperationID = 1;
+  string MsgType = 2;
+  repeated string MemberIDList = 3;
+  server_api_params.GroupInfo GroupInfo = 4;
+  server_api_params.Conversation Conversation = 5;
+  server_api_params.GroupRequest GroupRequest = 6;
+  server_api_params.FriendRequest FriendRequest = 7;
+  server_api_params.FriendInfo FriendInfo = 8;
+  server_api_params.BlackInfo BlackInfo = 9;
+  server_api_params.UserInfo UserInfo = 10;
+  repeated server_api_params.GroupMemberFullInfo memberInfoList = 11;
+  repeated server_api_params.MsgData msgList = 12;
+}
+
+message InitDataBaseReq{
+  string UserID = 1;
+  string OperationID = 2;
+}
+
+message SyncGroupMemberInfoReq{
+  string UserID = 1;
+  string OperationID = 2;
+  string GroupID = 3;
+}
+
+message SyncGroupMemberListReq{
+  string OperationID = 1;
+  string UserID = 2;
+  string memberList = 3;
+}
+
+message KickGroupMemberForAllReq{
+  string OperationID = 1;
+  string GroupID = 2;
+  string kickedID = 3;
+}
+
+message DeleteGroupMembersForAllReq{
+  string OperationID = 1;
+  string GroupID = 2;
+}
+
+message SyncUserInfoReq{
+  string OperationID = 1;
+  string UserID = 2;
+}
+
+
+message SyncAddFriendReq{
+  string OperationID = 1;
+  string UserID = 2;
+  string FriendID = 3;
+  string OperatorID = 4;
+}
+
+message SyncConversationReq{
+  string OperationID = 1;
+  string OwnerID = 2;
+  string ConversationID = 3;
+}
+
+service LocalDataBase{
+  rpc SyncData(SyncDataReq) returns(CommonResp);
+  //  rpc InitDataBase(InitDataBaseReq) returns(CommonResp);
+  //  rpc SyncGroupMemberInfoToLocal(SyncGroupMemberInfoReq) returns(CommonResp);
+  //  rpc SyncGroupMemerListToLocal(SyncGroupMemberListReq) returns(CommonResp);
+  //  rpc KickGroupMemerForAllToLocal(KickGroupMemberForAllReq) returns(CommonResp);
+  //  rpc DeleteGroupMemersForAllToLocal(DeleteGroupMembersForAllReq) returns(CommonResp);
+  //  rpc SyncUserInfoToLocal(SyncUserInfoReq) returns(CommonResp);
+  //  rpc SyncAddFriendToLocal(SyncAddFriendReq) returns(CommonResp);
+  //  rpc SyncConversationToLocal(SyncConversationReq) returns(CommonResp);
+}

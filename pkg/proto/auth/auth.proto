@@ -1,0 +1,144 @@
+syntax = "proto3";
+import "server/pkg/proto/sdk_ws/ws.proto";
+package pbAuth;
+option go_package = "./auth;pbAuth";
+
+message CommonResp{
+    int32   errCode = 1;
+    string  errMsg = 2;
+}
+
+message UserRegisterReq {
+    server_api_params.UserInfo UserInfo = 1;
+    string Password = 2;
+    string OperationID = 3;
+}
+message UserRegisterResp {
+    CommonResp CommonResp = 1;
+}
+
+
+message UserTokenReq {
+    int32  Platform = 1;
+    string FromUserID = 2;
+    string OpUserID = 3;
+    string OperationID = 4;
+    bool GAuthTypeToken = 5;
+}
+message UserTokenResp {
+    CommonResp CommonResp = 1;
+    string Token = 2;
+    string UserSign = 3;
+    int64  ExpiredTime = 4;
+}
+
+message ForceLogoutReq {
+    int32  Platform = 1;
+    string FromUserID = 2;
+    string OpUserID = 3;
+    string OperationID = 4;
+}
+message ForceLogoutResp {
+    CommonResp CommonResp = 1;
+}
+
+message UpdateUserIPReq {
+    int32  Platform = 1;
+    string UserID = 2;
+    string IPaddress = 3;
+    string OperationID = 4;
+}
+message UpdateUserIPResp {
+    CommonResp CommonResp = 1;
+}
+
+message GetUserIPReq {
+    string ForUserID = 1;
+    string FromUserID = 2;
+    string OperationID = 4;
+}
+message GetUserIPResp {
+    
+    string UserID = 1;
+    string IPaddress = 2;
+    string City = 3;
+    string LastOnlineTime = 4;
+    int32 OnlineDifValue = 5;
+    string OperationID = 6;
+    bool IsOnline = 7;
+    CommonResp CommonResp =8;
+}
+
+message ChangePasswordRequest {
+    string UserID = 1;
+    string OldPassword = 2;
+    string NewPassword = 3;
+    string OperationID = 4;
+}
+
+message ChangePasswordResponse {
+    CommonResp CommonResp = 1;
+}
+
+message GetDeviceLoginQrCodeRequest {
+    string OperationID = 1;
+    int32  Platform = 2;
+    string DeviceID = 3;
+}
+
+message GetDeviceLoginQrCodeResponse {
+    CommonResp CommonResp = 1;
+    string QrCode = 2;
+}
+
+message PushDeviceLoginQrCodeRequest {
+    string OperationID = 1;
+    int32  Platform = 2;
+    string UserId = 3;
+    string QrCode = 4;
+}
+
+message PushDeviceLoginQrCodeResponse {
+    CommonResp CommonResp = 1;
+    string TemporaryToken = 2;
+}
+
+message ConfirmDeviceLoginQrCodeRequest {
+    string OperationID = 1;
+    int32 Platform = 2;
+    string QrCode = 3;
+    string TemporaryToken = 4;
+    bool Agree = 5;
+    string UserId = 6;
+}
+
+message ConfirmDeviceLoginQrCodeResponse {
+    CommonResp CommonResp = 1;
+}
+
+message CheckDeviceLoginQrCodeStateRequest {
+    string OperationID = 1;
+    int32 Platform = 2;
+    string QrCode = 3;
+    string DeviceID = 4;
+}
+
+message CheckDeviceLoginQrCodeStateResponse {
+    CommonResp CommonResp = 1;
+    int32 State = 2;
+    string UserId = 3;
+}
+
+service Auth {
+    rpc UserRegister(UserRegisterReq) returns(UserRegisterResp);
+    rpc UserToken(UserTokenReq) returns(UserTokenResp);
+    rpc ForceLogout(ForceLogoutReq) returns(ForceLogoutResp);
+    rpc UpdateUserIPandStatus(UpdateUserIPReq) returns(UpdateUserIPResp);
+    rpc GetUserIPandStatus(GetUserIPReq) returns(GetUserIPResp);
+    rpc ChangePassword(ChangePasswordRequest) returns(ChangePasswordResponse);
+    // qr login
+    rpc GetDeviceLoginQrCode(GetDeviceLoginQrCodeRequest) returns(GetDeviceLoginQrCodeResponse);
+    rpc PushDeviceLoginQrCode(PushDeviceLoginQrCodeRequest) returns(PushDeviceLoginQrCodeResponse);
+    rpc ConfirmDeviceLoginQrCode(ConfirmDeviceLoginQrCodeRequest) returns(ConfirmDeviceLoginQrCodeResponse);
+    rpc CheckDeviceLoginQrCodeState(CheckDeviceLoginQrCodeStateRequest) returns(CheckDeviceLoginQrCodeStateResponse);
+}

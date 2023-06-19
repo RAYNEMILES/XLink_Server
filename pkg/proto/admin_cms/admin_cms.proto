@@ -1,0 +1,1509 @@
+syntax = "proto3";
+import "server/pkg/proto/appversion/appversion.proto";
+import "server/pkg/proto/sdk_ws/ws.proto";
+option go_package = "./admin_cms;admin_cms";
+
+package admin_cms;
+
+message CommonResp {
+    int32  errCode = 1;
+    string errMsg = 2;
+}
+
+message AdminUser{
+    string Name = 1;
+    string NickName = 2;
+    string UserId = 3;
+    int64 CreateTime = 4;
+    int32 Status = 6;
+    int64 TwoFactorEnabled = 7;
+    int64 Role  = 8;
+    string CreateUser  = 9;
+    string UpdateUser  = 10;
+    string IPRangeStart  = 11;
+    string IPRangeEnd = 12;
+    string LastLoginIP = 13;
+    string Remarks = 14;
+    int64 User2FAuthEnable  = 15;
+    int64 LastLoginTime = 16;
+}
+
+message InterestLanguage {
+    int64 Id = 1;
+    int64 InterestId = 2;
+    string LanguageType = 3;
+    string Name = 4;
+}
+
+message InterestReq {
+    repeated InterestLanguage Name = 2;
+    int32 Status = 3;
+    string UpdateUser = 4;
+    int64 UpdateTime = 5;
+    string Remark = 6;
+    string CreateUser = 7;
+    int64 CreateTime = 8;
+    int64 DeleteTime = 9;
+    int32 IsDefault = 10;
+}
+
+message InterestResp {
+    int64 Id = 1;
+    repeated InterestLanguage Name = 2;
+    int32 Status = 3;
+    string UpdateUser = 4;
+    int64 UpdateTime = 5;
+    string Remark = 6;
+    string CreateUser = 7;
+    int64 CreateTime = 8;
+    int64 DeleteTime = 9;
+    int32 IsDefault = 10;
+}
+
+message UserInterests {
+    string Username = 1;
+    string UserID = 2;
+    int32 Type = 3;
+    repeated InterestResp Interests = 4;
+}
+
+message GroupInterests {
+    string GroupID = 1;
+    string GroupName = 2;
+    int32 GroupType = 3;
+    repeated InterestResp Interests = 4;
+}
+
+message AdminLoginReq  {
+    string OperationID = 1;
+    string AdminID = 2;
+    string Secret = 3;
+    bool GAuthTypeToken = 4;
+    bool SecretHashd = 5;
+    string RequestIP = 6;
+}
+
+message AdminLoginResp {
+    string token = 1;
+    bool GAuthEnabled = 2;
+    bool GAuthSetupRequired = 3;
+    string GAuthSetupProvUri = 4;
+}
+
+message DiscoverUrl {
+    uint32 ID = 1;
+    string Url = 2;
+    int64 Status = 3;
+    int64 PlatformId = 4;
+    int64 CreateTime = 5;
+    string CreateUser = 6;
+    int64 UpdateTime = 7;
+    string UpdateUser = 8;
+    int64 DeleteTime = 9;
+    string DeleteUser = 10;
+}
+
+message GetDiscoverUrlReq {
+    string OperationID = 1;
+    string PlatformID = 2;
+    string UserId = 3;
+}
+
+message GetDiscoverUrlResp {
+    DiscoverUrl Url = 1;
+}
+
+message GetInviteCodeBaseLinkReq {
+    string OperationID = 1;
+}
+
+message GetInviteCodeBaseLinkResp {
+    string InviteCodeBaseLink = 1;
+}
+
+message SetInviteCodeBaseLinkReq {
+    string OperationID = 1;
+    string value = 3;
+    string update_user = 4;
+}
+
+message AddInviteCodeRequest {
+    string OperationID = 1;
+    string UserId = 2;
+    string Code = 3;
+    string Greeting = 4;
+    string Note = 5;
+}
+message AddInviteCodeResponse {
+    appversion.CommonResp CommonResp = 1;
+    string InviteCode = 2;
+}
+
+message SaveDiscoverUrlReq {
+    string OperationID = 1;
+    string Url = 2;
+    string UserID = 3;
+    string PlatformID = 4;
+}
+
+message SaveDiscoverUrlResp {
+    appversion.CommonResp CommonResp = 1;
+}
+
+message SwitchDiscoverStatusReq {
+    string OperationID = 1;
+    uint32 Status = 2;
+    string UserID = 3;
+    string PlatformID = 4;
+}
+
+message SwitchDiscoverStatusResp {
+    appversion.CommonResp CommonResp = 1;
+}
+
+
+message CheckInviteCodeRequest {
+    string InviteCode = 1;
+}
+message CheckInviteCodeResponse {
+    bool valid = 1;
+}
+
+message GetChannelCodeListRequest {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+    GetChannelCodeListConditions Conditions = 3;
+}
+message GetChannelCodeListConditions {
+    string Code = 1;
+    string FriendId =2;
+    string GroupId = 3;
+    string Note = 4;
+    string State = 5;
+    string IsOfficial = 6;
+    string OrderBy = 7;
+}
+
+message GetChannelCodeListResponse {
+    int64 CurrentNumber = 1;
+    int64 ShowNumber = 2;
+    int64 Total = 3;
+    int64 IsOpen = 4;
+    int64 Limit = 5;
+    repeated ChannelCode ChannelCodes = 6;
+}
+
+message ChannelCode {
+    string Id = 1;
+    string Code = 2;
+    string Greeting = 3;
+    string Note = 4;
+    string State = 5;
+    repeated string GroupIds = 6;
+    repeated string FriendIds = 7;
+    int64 SourceId = 8;
+    repeated Friends Friends = 9;
+    repeated Groups Groups = 10;
+}
+message Friends {
+    string Id = 1;
+    string name = 2;
+}
+message Groups {
+    string Id = 1;
+    string name = 2;
+}
+message SwitchChannelCodeStateRequest {
+    string OperationID = 1;
+    string Code = 2;
+    string State = 3;
+    string OperatorUserId = 4;
+}
+
+message SwitchChannelCodeStateResponse {
+    appversion.CommonResp CommonResp = 1;
+}
+
+message EditChannelCodeRequest {
+    string OperationID = 1;
+    string Code = 2;
+    string Greeting = 3;
+    string Note = 4;
+    string FriendIds = 5;
+    string GroupIds = 6;
+    string OperatorUserId = 7;
+    int64 SourceId = 8;
+}
+
+message EditChannelCodeResponse {
+    appversion.CommonResp CommonResp = 1;
+}
+
+message AddChannelCodeRequest {
+    string OperationID = 1;
+    string Code = 2;
+    string Greeting = 3;
+    string Note = 4;
+    string FriendIds = 5;
+    string GroupIds = 6;
+    string OperatorUserId = 7;
+    int64 SourceId = 8;
+}
+
+message AddChannelCodeResponse {
+    appversion.CommonResp CommonResp = 1;
+}
+
+message MultiDeleteChannelCodeRequest {
+    string OperationID = 1;
+    repeated string Code = 2;
+    string OperatorUserId = 3;
+}
+
+message MultiDeleteChannelCodeResponse {
+    appversion.CommonResp CommonResp = 1;
+}
+
+message SetChannelCodeLimitRequest {
+    string OperationID = 1;
+    string State = 2;
+    string OperatorUserId = 3;
+}
+
+message SetChannelCodeLimitResponse {
+    appversion.CommonResp CommonResp = 1;
+}
+
+message SetChannelCodeSwitchRequest {
+    string OperationID = 1;
+    string State = 2;
+    string OperatorUserId = 3;
+}
+
+message SetChannelCodeSwitchResponse {
+    appversion.CommonResp CommonResp = 1;
+}
+
+message SetInviteCodeSwitchRequest {
+    string OperationID = 1;
+    string State = 2;
+    string OperatorUserId = 3;
+}
+
+message SetInviteCodeSwitchResponse {
+    appversion.CommonResp CommonResp = 1;
+}
+
+message SetInviteCodeLimitRequest {
+    string OperationID = 1;
+    string State = 2;
+    string OperatorUserId = 3;
+}
+
+message SetInviteCodeLimitResponse {
+    appversion.CommonResp CommonResp = 1;
+}
+
+message MultiDeleteInviteCodeRequest {
+    string OperationID = 1;
+    repeated string Code = 2;
+    string OperatorUserId = 3;
+}
+
+message MultiDeleteInviteCodeResponse {
+    appversion.CommonResp CommonResp = 1;
+}
+
+message GetInviteCodeListRequest {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+    GetInviteCodeListConditions Conditions = 3;
+}
+message GetInviteCodeListConditions {
+    string UserName = 1;
+    string UserId =2;
+    string Code = 3;
+    string Note = 4;
+    string State = 5;
+    string OrderBy = 6;
+}
+
+message GetInviteCodeListResponse {
+    int64 CurrentNumber = 1;
+    int64 ShowNumber = 2;
+    int64 Total = 3;
+    int64 IsOpen = 4;
+    int64 Limit = 5;
+    string InviteCodeBaseLink = 6;
+    repeated InviteCodes List = 7;
+}
+message InviteCodes{
+    string Id = 1;
+    string Code = 2;
+    string UserId = 3;
+    string UserName = 4;
+    string Greeting = 5;
+    string Note = 6;
+    string State = 7;
+}
+
+
+
+message AddAdminUserResp{
+    CommonResp  CommonResp = 1;
+}
+message AddAdminUserReq{
+    string  UserId              = 1;
+    string  Name                = 2;
+    string  NickName            = 3;
+    string  Password            = 4;
+    string  PhoneNumber         = 5;
+    int64    TwoFactorEnabled    = 6;
+    string OperationID = 7;
+    string OpUserId = 8;
+    string IPRangeStart = 9;
+    string IPRangeEnd = 10;
+    int32 Role = 11;
+    int64    User2FAuthEnable    = 12;
+    string LastLoginIP = 13;
+    string Remarks = 14;
+    int64 Status = 15;
+}
+
+
+message DeleteAdminUserReq {
+    string User_id = 1;
+    string OperationID = 2;
+    string OpUserId = 3;
+}
+
+message DeleteAdminUserResp {
+    CommonResp  CommonResp = 1;
+}
+
+message AlterAdminUserRequest {
+    string  UserId              = 1;
+    string  Name                = 2;
+    string  NickName            = 3;
+    string  Password            = 4;
+    string  PhoneNumber         = 5;
+    int64    TwoFactorEnabled    = 6;
+    string OperationID = 7;
+    string OpUserId = 8;
+    string IPRangeStart = 9;
+    string IPRangeEnd = 10;
+    int32 Role = 11;
+    int64    User2FAuthEnable    = 12;
+    string LastLoginIP = 13;
+    string Remarks = 14;
+    int64 Status = 15;
+
+}
+message AlterAdminUserResp {
+    CommonResp  CommonResp = 1;
+}
+
+message GetAdminUsersReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+    string UserName = 3;
+}
+
+message GetAdminUsersResp{
+    CommonResp  CommonResp = 1;
+    repeated AdminUser user = 2;
+    server_api_params.ResponsePagination Pagination = 3;
+    int32 UserNums = 4;
+}
+
+message SwitchAdminUserStatusReq {
+    string User_id = 1;
+    string OperationID = 2;
+    string OpUserId = 3;
+    int32 Status = 4;
+}
+
+message ChangeAdminUserPasswordReq {
+    string Secret = 1;
+    string NewSecret = 2;
+    string OperationID = 3;
+    string TOTP = 4;
+    string User_id = 5;
+}
+message ChangeAdminUserPasswordResp {
+    string Token = 1;
+    bool PasswordUpdated = 2;
+}
+
+
+message SwitchAdminUserStatusResp {
+    CommonResp  CommonResp = 1;
+}
+
+
+message AdminPermissionsReq {
+    string User_id = 1;
+}
+
+
+message AdminRole {
+    repeated AdminApiPath   allowedApis = 1;
+    repeated AdminPagePath allowedPages = 2;
+    int64 id = 3;
+    int64  Status = 4;
+}
+
+message AdminAction  {
+    string actionName = 1 ;
+    repeated AdminApiPath   allowedApis = 2;
+    repeated AdminPagePath allowedPages = 3;
+    int64 id = 4;
+    int64  Status = 5;
+}
+message AdminApiPath  {
+    string apiName = 1;
+    string apiPath  = 2;
+    int64 id = 3;
+    int64  Status = 4;
+}
+
+message AdminPagePath  {
+    string pageName  = 1;
+    string pagePath = 2;
+    int64 id = 3;
+    int64 fatherPageID = 4;
+    int64 isMenu = 5;
+    int64 sortPriority = 6;
+    int64  Status = 7;
+    repeated AdminPagePath childs = 8;
+    repeated int64 AdminAPIsIDs = 9;
+    int64 IsButton = 10;
+
+}
+message AdminPermissionsResp {
+    AdminRole adminRole = 1;
+}
+
+
+message AddAdminRoleRequest {
+    string OperationID = 1;
+    string AdminRoleName = 2;
+    int64  Status = 3;
+    string AdminAPIsIDs = 4;
+    string AdminPagesIDs = 5;
+    string AdminRoleDiscription =6;
+    string CreateUser      = 7;
+    int64 CreateTime       = 8;
+    string UpdateUser      = 9;
+    int64 UpdateTime         = 10;
+    string AdminRoleRemarks  = 11;
+}
+message AddAdminRoleResponse {
+    CommonResp  CommonResp = 1;
+}
+message SearchAminRolesRequest{
+    string RoleName =1;
+    string Description =2;
+    int64 PageNumber = 3;
+    int64 PageLimit  = 4;
+}
+
+message AlterAdminRoleRequest {
+    int64 AdminRoleID = 1;
+    string OperationID = 2;
+    string AdminRoleName = 3;
+    int64 Status = 4;
+    string AdminAPIsIDs = 5;
+    string AdminPagesIDs = 6;
+    string AdminRoleDiscription =7;
+    string CreateUser      = 8;
+    int64 CreateTime       = 9;
+    string UpdateUser      = 10;
+    int64 UpdateTime         = 11;
+    string AdminRoleRemarks  = 12;
+}
+message AlterAdminRoleResponse {
+    CommonResp  CommonResp = 1;
+}
+
+message GetAllAdminRolesReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+}
+
+message AdminRoleResp {
+    int64 AdminRoleID = 1;
+    string AdminRoleName = 2;
+    int64 Status = 3;
+    string AdminAPIsIDs = 4;
+    string AdminPagesIDs = 5;
+    string AdminRoleDiscription =6;
+    string CreateUser      = 7;
+    int64 CreateTime       = 8;
+    string UpdateUser      = 9;
+    int64 UpdateTime         = 10;
+    string AdminRoleRemarks  = 11;
+
+}
+
+message GetAllAdminRolesResp{
+    CommonResp  CommonResp = 1;
+    repeated AdminRoleResp adminRoles = 2;
+    server_api_params.ResponsePagination Pagination = 3;
+    int32 adminRolesNums = 4;
+}
+
+
+
+// Admin API Models
+message AddApiAdminRoleRequest {
+    string OperationID = 1;
+    string ApiName = 2;
+    string ApiPath = 3;
+    int64  Status = 4;
+    string CreateUser = 5;
+}
+message AddApiAdminRoleResponse {
+    CommonResp  CommonResp = 1;
+}
+message AlterApiAdminRoleRequest {
+    int64 ApiID = 1;
+    string OperationID = 2;
+    string ApiName = 3;
+    string ApiPath = 4;
+    int32 Status = 5;
+    string CreateUser = 6;
+}
+message AlterApiAdminRoleResponse {
+    CommonResp  CommonResp = 1;
+}
+
+message GetAllApiAdminRolesReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+}
+
+message ApiAdminRoleResp {
+    int64 ApiID = 1;
+    string ApiName = 2;
+    string ApiPath = 3;
+    int32 Status = 4;
+    string CreateUser = 5;
+    string UpdateUser = 6;
+    int64 CreateTime = 7;
+    int64 UpdateTime = 8;
+
+}
+
+message GetAllApiAdminRolesResp{
+    CommonResp  CommonResp = 1;
+    repeated ApiAdminRoleResp ApisAdminRole = 2;
+    server_api_params.ResponsePagination Pagination = 3;
+    int32 ApiNums = 4;
+}
+
+// Admin Page Models
+message AddPageAdminRoleRequest {
+    string OperationID = 1;
+    string PageName = 2;
+    string PagePath = 3;
+    int64  Status = 4;
+    string CreateUser = 5;
+    int64 FatherPageID = 6;
+    int64 IsMenu = 7;
+    int64 SortPriority = 8;
+    string AdminAPIsIDs = 9;
+    int64 IsButton = 10;
+}
+message AddPageAdminRoleResponse {
+    CommonResp  CommonResp = 1;
+}
+message AlterPageAdminRoleRequest {
+    int64 PageID = 1;
+    string OperationID = 2;
+    string PageName = 3;
+    string PagePath = 4;
+    int32 Status = 5;
+    string CreateUser = 6;
+    int64 FatherPageID = 7;
+    int64 IsMenu = 8;
+    int64 SortPriority = 9;
+    string AdminAPIsIDs = 10;
+    int64 IsButton = 11;
+}
+message AlterPageAdminRoleResponse {
+    CommonResp  CommonResp = 1;
+}
+
+message GetAllPageAdminRolesReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+    int32 FatherIDFilter = 3;
+}
+
+message PageAdminRoleResp {
+    int64 PageID = 1;
+    string PageName = 2;
+    string PagePath = 3;
+    int32 Status = 4;
+    string CreateUser = 5;
+    string UpdateUser = 6;
+    int64 FatherPageID = 7;
+    int64 IsMenu = 8;
+    int64 SortPriority = 9;
+    string AdminAPIsIDs = 10;
+    int64 IsButton = 11;
+    int64 CreateTime = 12;
+    int64 UpdateTime = 13;
+}
+
+message GetAllPageAdminRolesResp{
+    CommonResp  CommonResp = 1;
+    repeated PageAdminRoleResp PagesAdminRole = 2;
+    server_api_params.ResponsePagination Pagination = 3;
+    int32 ApiNums = 4;
+    repeated ApiAdminRoleResp ApisAdminRole = 5;
+    repeated PageAdminRoleResp FatherPagesAdminRole = 6;
+    int32 TotalRecCount = 7;
+}
+
+
+//Admin action Models
+message AddAdminActionRequest {
+    string OperationID = 1;
+    string AdminActionName = 2;
+    int64  Status = 3;
+    string AdminAPIsIDs = 4;
+    string AdminPagesIDs = 5;
+    string CreateUser = 6;
+}
+message AddAdminActionResponse {
+    CommonResp  CommonResp = 1;
+}
+message AlterAdminActionRequest {
+    int64 AdminActionID = 1;
+    string OperationID = 2;
+    string AdminActionName = 3;
+    int64 Status = 4;
+    string AdminAPIsIDs = 5;
+    string AdminPagesIDs = 6;
+    string CreateUser = 7;
+}
+message AlterAdminActionResponse {
+    CommonResp  CommonResp = 1;
+}
+
+message GetAllAdminActionReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+}
+
+message AdminActionResp {
+    int64 AdminActionID = 1;
+    string AdminActionName = 2;
+    int64 Status = 3;
+    string AdminAPIsIDs = 4;
+    string AdminPagesIDs = 5;
+    string CreateUser = 6;
+    int64 CreateTime = 7;
+}
+
+message GetAllAdminActionResp{
+    CommonResp  CommonResp = 1;
+    repeated AdminActionResp adminActions = 2;
+    server_api_params.ResponsePagination Pagination = 3;
+    int32 adminActionNums = 4;
+}
+
+
+message GetgAuthQrCodeReq {
+    string User_id = 1;
+}
+
+message GetgAuthQrCodeResp {
+    string gAuthSetupProvUri = 1;
+    bool UsergAuthStatus = 2;
+    string gAuthAccountID =  3;
+    string gAuthKey = 4;
+}
+
+
+message AlterGAuthStatusReq {
+    string User_id = 1;
+    bool UserGAuthStatus = 2;
+}
+
+message AlterGAuthStatusResp {
+    bool gAuthStatus = 1;
+}
+
+message GetInterestsReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+    string Name = 3;
+    string CreateUser = 4;
+    string Remark = 5;
+    int32 TimeType = 6;
+    string StartTime = 7;
+    string EndTime = 8;
+    string Status = 9;
+    string OrderBy = 10;
+    int32 IsDefault = 11;
+}
+
+message GetInterestsResp {
+    CommonResp  CommonResp = 1;
+    repeated InterestResp Interests = 2;
+    server_api_params.ResponsePagination Pagination = 3;
+    int32 InterestNums = 4;
+}
+
+message DeleteInterestsReq {
+    string OperationID = 1;
+    string OpUserId = 2;
+    string Interests = 3;
+}
+
+message DeleteInterestsResp {
+    CommonResp  CommonResp = 1;
+}
+
+message AlterInterestReq {
+    int64 Id = 1;
+    repeated InterestLanguage Name = 2;
+    int32 Status = 3;
+    string UpdateUser = 4;
+    int64 UpdateTime = 5;
+    string Remark = 6;
+    string CreateUser = 7;
+    int64 CreateTime = 8;
+    int64 DeleteTime = 9;
+    string OperationID = 10;
+    string OpUserId = 11;
+    int32 IsDefault = 12;
+}
+
+message AlterInterestResp {
+    CommonResp  CommonResp = 1;
+}
+
+message ChangeInterestStatusReq {
+    string OperationID = 1;
+    int64 InterestId = 2;
+    int32 Status = 3;
+    string OpUserId = 4;
+}
+
+message ChangeInterestStatusResp {
+    CommonResp  CommonResp = 1;
+}
+
+message AddInterestsReq {
+    string OperationID = 1;
+    string OpUserId = 2;
+    repeated InterestReq Interests = 3;
+}
+
+message AddInterestsResp {
+    CommonResp  commonResp = 1;
+}
+
+
+message GetUserInterestsReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+    string Account = 3;
+    string InterestName = 4;
+    int32 Default = 5;
+    string OrderBy = 6;
+    string UserID = 7;
+}
+
+message GetUserInterestsResp {
+    CommonResp  CommonResp = 1;
+    repeated UserInterests Interests = 2;
+    server_api_params.ResponsePagination Pagination = 3;
+    int32 InterestNums = 4;
+}
+
+message AlterUserInterestsReq {
+    string OperationID = 1;
+    string OpUserId = 2;
+    string UserID = 3;
+    string Interests = 4;
+}
+
+message AlterUserInterestsResp {
+    CommonResp  CommonResp = 1;
+}
+
+message DeleteUserInterestsReq {
+    string OperationID = 1;
+    string UsersID = 2;
+}
+
+message DeleteUserInterestsResp {
+    CommonResp  CommonResp = 1;
+}
+
+message GetGroupInterestsReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+    string CreatorUser = 3;
+    string GroupName = 4;
+    string InterestName = 5;
+    string OrderBy = 6;
+    string GroupID = 7;
+}
+
+message GetGroupInterestsResp {
+    CommonResp  CommonResp = 1;
+    repeated GroupInterests Interests = 2;
+    server_api_params.ResponsePagination Pagination = 3;
+    int32 InterestNums = 4;
+}
+
+message AlterGroupInterestsReq {
+    string OperationID = 1;
+    string GroupID = 2;
+    string Interests = 3;
+}
+
+message AlterGroupInterestsResp {
+    CommonResp  CommonResp = 1;
+}
+
+message SearchAdminUsersRequest {
+    string AccountName  = 1;
+    int64 RoleID        = 2;
+    int64 GAuthStatus   = 3;
+    int64 Status       = 4;
+    string IPAddress   = 5;
+    int64 PageNumber = 6;
+    int64 PageLimit  = 7;
+    int64 DateStart =8;
+    int64 DateEnd  =9;
+    int64 CreateTimeOrLastLogin =10;
+    string Remarks = 11;
+}
+message SearchApiAdminRoleRequest {
+    string ApiName  = 1;
+    string ApiPath  = 2;
+    string AddedBy  = 3;
+    int64 DateStart = 4;
+    int64 DateEnd   = 5;
+    int64 PageNumber = 6;
+    int64 PageLimit  = 7;
+}
+
+message SearchPageAdminRolesRequest {
+    string PageName  = 1;
+    string PagePath  = 2;
+    string AddedBy  = 3;
+    int64 DateStart = 4;
+    int64 DateEnd   = 5;
+    int64 PageNumber = 6;
+    int64 PageLimit  = 7;
+    int64 Status = 8;
+}
+
+message OperationLogRequest {
+    string Operator  = 1;
+    string Action  = 2;
+    string Payload  = 3;
+    string OperatorIP = 4;
+    string Executee = 5;
+    int64 CreateTime  = 6;
+
+}
+
+//SearchOperationLogsRequest
+message SearchOperationLogsRequest {
+    string Operator  = 1;
+    string Action    = 2;
+    string Executee  = 3;
+    int64 DateStart  = 4;
+    int64 DateEnd    = 5;
+    int64 PageNumber = 6;
+    int64 PageLimit  = 7;
+}
+
+message SearchOperationLogsResponse {
+    repeated OperationLogRequest OperationLogs  = 1;
+    int64 PageNumber = 2;
+    int64 PageLimit  = 3;
+    int64 OperationLogsCount = 4;
+}
+
+message GetMePageURLReq {
+    string OperationID = 1;
+    int64 PageType = 2;
+}
+
+message GetMePageURLResp {
+    map<string, string> Url = 1;
+    int32  Status = 2;
+    int64  CreateTime = 3;
+    string  CreateUser = 4;
+    int64 UpdateTime = 5;
+    string UpdateUser = 6;
+    int64  DeleteTime = 7;
+    string  DeleteUser = 8;
+}
+
+message SaveMePageURLReq {
+    string OpUserID = 1;
+    string  OperationID = 2;
+    int64 PageType = 3;
+    map<string, string> Url = 4;
+}
+
+message SaveMePageURLResp {
+    CommonResp CommonResp = 1;
+}
+
+message SwitchMePageURLReq {
+    string OpUserID = 1;
+    string OperationID = 2;
+    int64 PageType = 3;
+    int32 Status = 4;
+}
+
+message SwitchMePageURLResp {
+    CommonResp CommonResp = 1;
+}
+
+message GetMePageURLsReq {
+    string OperationID = 2;
+}
+
+message MePageObj {
+    int32 Status = 1;
+    map<string, string> URLMap = 2;
+}
+
+message GetMePageURLsResp {
+    map<string, MePageObj> MePageURL = 1;
+}
+
+message ManagementShortVideoRequest {
+    string  OperationID = 1;
+    string UserId = 2;
+    int32 Status = 3;
+    string FileId = 4;
+    string Desc = 5;
+    int64 EmptyDesc = 6;
+    int32 IsBlock = 7;
+    int64 StartTime = 8;
+    int64 EndTime = 9;
+    server_api_params.RequestPagination Pagination = 10;
+}
+
+message ManagementShortVideoResponse {
+    CommonResp  commonResp = 1;
+    server_api_params.ResponsePagination Pagination = 2;
+    int64 TotalCount = 3;
+    repeated ShortVideoInfoMessage ShortVideoInfo = 4;
+}
+
+message ShortVideoInfoMessage {
+    int64 Id = 1;
+    string UserId = 2;
+    string UserName = 3;
+    int32 Status = 4;
+    int64 CreateTime = 5;
+    string MediaUrl = 6;
+    string CoverUrl = 7;
+    string Desc = 8;
+    int64 LikeNum = 9;
+    int64 CommentNum = 10;
+    int64 ReplyNum = 11;
+    int64 CommentLikeNum = 12;
+    string Remark = 13;
+    string FileId = 15;
+    string InterestId = 16;
+}
+
+message DeleteShortVideoRequest {
+    string  OperationID = 1;
+    repeated string FileId = 2;
+}
+
+message DeleteShortVideoResponse {
+    CommonResp  commonResp = 1;
+}
+
+message AlterShortVideoRequest {
+    string  OperationID = 1;
+    string FileId = 2;
+    int32 Status = 3;
+    string Desc = 4;
+    string Remark = 5;
+}
+
+message AlterShortVideoResponse {
+    CommonResp  commonResp = 1;
+}
+
+message GetShortVideoLikeListRequest {
+    string  OperationID = 1;
+    string FileId = 2;
+    string UserId = 3;
+    int32 Status = 4;
+    string Desc = 5;
+    int64 EmptyDesc = 6;
+    int64 StartTime = 7;
+    int64 EndTime = 8;
+    server_api_params.RequestPagination Pagination = 9;
+    string LikeUserId = 10;
+}
+
+message GetShortVideoLikeListResponse {
+    CommonResp  commonResp = 1;
+    server_api_params.ResponsePagination Pagination = 2;
+    int64 TotalCount = 3;
+    repeated ShortVideoLikeMessage ShortVideoLike = 4;
+}
+
+message ShortVideoLikeMessage {
+    int64 Id = 1;
+    string FileId = 2;
+    string MediaUrl = 3;
+    string CoverUrl = 4;
+    string UserId = 5;
+    string UserName = 6;
+    int64 CreateTime = 7;
+    string PostUserId = 8;
+    string PostUserName = 9;
+    int32 FileStatus = 10;
+}
+
+message DeleteShortVideoLikeRequest {
+    string  OperationID = 1;
+    repeated int64 LikeIdList  = 2;
+}
+
+message DeleteShortVideoLikeResponse {
+    CommonResp  commonResp = 1;
+}
+
+message GetShortVideoCommentListRequest {
+    string  OperationID = 1;
+    string FileId = 2;
+    string UserId = 3;
+    int32 Status = 4;
+    string Desc = 5;
+    int64 EmptyDesc = 6;
+    int64 StartTime = 7;
+    int64 EndTime = 8;
+    string Content = 9;
+    string CommentUserId = 10;
+    server_api_params.RequestPagination Pagination = 11;
+}
+
+message GetShortVideoCommentListResponse {
+    CommonResp  commonResp = 1;
+    server_api_params.ResponsePagination Pagination = 2;
+    int64 TotalCount = 3;
+    repeated ShortVideoCommentMessage ShortVideoComment = 4;
+}
+
+message ShortVideoCommentMessage {
+    int64 Id = 1;
+    string FileId = 2;
+    string MediaUrl = 3;
+    string CoverUrl = 4;
+    string UserId = 5;
+    string UserName = 6;
+    int64 CreateTime = 7;
+    string Content = 8;
+    int64 LikeNum = 9;
+    int64 ReplyNum = 10;
+    string Remark = 11;
+    int32 Status = 12;
+    string Desc = 13;
+    string PostUserId = 14;
+    string PostUserName = 15;
+    int32 FileStatus = 16;
+}
+
+message DeleteShortVideoCommentRequest {
+    string  OperationID = 1;
+    repeated int64 CommentIdList  = 2;
+}
+
+message DeleteShortVideoCommentResponse {
+    CommonResp  commonResp = 1;
+}
+
+message AlterShortVideoCommentRequest {
+    string  OperationID = 1;
+    int64 CommentId = 2;
+    string Content = 3;
+    string Remark = 4;
+}
+
+message AlterShortVideoCommentResponse {
+    CommonResp  commonResp = 1;
+}
+
+message GetShortVideoInterestLabelListRequest {
+    string  OperationID = 1;
+    string UserId = 2;
+    string Desc = 3;
+    int64 EmptyDesc = 4;
+    int64 Default = 5;
+    string InterestName = 6;
+    server_api_params.RequestPagination Pagination = 7;
+}
+
+message GetShortVideoInterestLabelListResponse {
+    CommonResp  commonResp = 1;
+    server_api_params.ResponsePagination Pagination = 2;
+    int64 TotalCount = 3;
+    repeated ShortVideoInterestLabelMessage ShortVideoInterestLabel = 4;
+}
+
+message ShortVideoInterestLabelMessage {
+    int64 Id = 1;
+    string FileId = 2;
+    string MediaUrl = 3;
+    string CoverUrl = 4;
+    string UserId = 5;
+    string UserName = 6;
+    string InterestId = 7;
+    repeated int64 InterestIdList = 8;
+    repeated string InterestChineseName = 9;
+    repeated string InterestEnglishName = 10;
+    repeated string InterestArabicName = 11;
+}
+
+message AlterShortVideoInterestLabelRequest {
+    string  OperationID = 1;
+    string FileId = 2;
+    repeated int64 InterestIdList = 3;
+}
+
+message AlterShortVideoInterestLabelResponse {
+    CommonResp  commonResp = 1;
+}
+
+message RepliesResp {
+    string FileId = 1;
+    string PublishUserID = 2;
+    string PublishUser = 3;
+    int32 ShortVideoStatus = 4;
+    string Content = 5;
+    string CoverUrl = 6;
+    string MediaUrl = 7;
+    int64 Size = 8;
+    int64 Height = 9;
+    int64 Width = 10;
+    int64 CommentId = 11;
+    string CommentContent = 12;
+    int64 CommentStatus = 13;
+    int64 ReplyCommentId = 14;
+    string ReplyUserName = 15;
+    string ReplyUserID = 16;
+    int64 ReplyTime = 17;
+    int64 LikeCount = 18;
+    int64 CommentCount = 19;
+    string Remark = 20;
+    int64 Status = 21;
+    string ReplyCommentContent = 22;
+}
+
+message GetShortVideoCommentRepliesReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+    string ShortVideoID = 3;
+    int64 CommentId = 4;
+    int32 Privacy = 5;
+    string Content = 6;
+    int32 IsEmpty = 7;
+    string CommentUser  = 8;
+    string Comment = 9;
+    string ReplyUser = 10;
+    string ReplyContent = 11;
+    string StartTime = 12;
+    string EndTime = 13;
+    string Publisher = 14;
+}
+
+message GetShortVideoCommentRepliesResp {
+    CommonResp  CommonResp = 1;
+    server_api_params.ResponsePagination Pagination = 2;
+    repeated RepliesResp CommentReplies = 3;
+    int64 RepliesCount = 4;
+}
+
+message AlterReplyReq {
+    string OperationID = 1;
+    string ShortVideoId = 2;
+    string Content = 3;
+    int64 ReplyCommentId = 4;
+    string ReplyContent = 5;
+    string Remark = 6;
+}
+
+message AlterReplyResp {
+    CommonResp  CommonResp = 1;
+}
+
+message RepliesReq {
+    int64 ParentId = 1;
+    int64 CommentId = 2;
+}
+
+message DeleteRepliesReq {
+    string OperationID = 1;
+    repeated int64 CommentIds = 2;
+}
+
+message DeleteRepliesResp {
+    CommonResp  CommonResp = 1;
+}
+
+message GetShortVideoCommentLikesReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+    int64 Privacy = 3;
+    string LikeUser = 4;
+    string Content = 5;
+    int32 IsEmpty = 6;
+    string CommentUser = 7;
+    string Comment = 8;
+    string ReplyUser = 9;
+    string ReplyContent = 10;
+    int64 CommentID = 11;
+    string Publisher = 12;
+    string StartTime = 13;
+    string EndTime = 14;
+}
+
+message LikesResp {
+    int64 CommentId = 1;
+    int64 LikeId = 2;
+    string FileId = 3;
+    string CommentUserName = 4;
+    string CommentUserID = 5;
+    string CommentContent = 6;
+    string LikeUserName = 7;
+    string LikeUserID = 8;
+    int64 LikeTime = 9;
+    string Remark = 10;
+    string CoverUrl = 11;
+    string MediaUrl = 12;
+    int64 Size = 13;
+    int64 Height = 14;
+    int64 Width = 15;
+    int64 Status = 16;
+    int32 ShortVideoStatus = 17;
+    string PublishUserID = 18;
+    string PublishUser = 19;
+    string Content = 20;
+    int64 CommentStatus = 21;
+    int64 ReplyCommentId = 22;
+    string ReplyUserName = 23;
+    string ReplyUserID = 24;
+    int64 ReplyTime = 25;
+    int64 LikeCount = 26;
+    string ReplyCommentContent = 27;
+}
+
+message GetShortVideoCommentLikesResp {
+    CommonResp  CommonResp = 1;
+    server_api_params.ResponsePagination Pagination = 2;
+    repeated LikesResp CommentLikes = 3;
+    int64 LikesCount = 4;
+}
+
+message AlterLikeReq {
+    string OperationID = 1;
+    int64 LikeId = 2;
+    string Content = 3;
+    string Remark = 4;
+    string ShortVideoID = 5;
+}
+
+message AlterLikeResp {
+    CommonResp  CommonResp = 1;
+}
+
+message DeleteLikesReq {
+    string OperationID = 1;
+    repeated int64 Likes = 2;
+}
+
+message DeleteLikesResp {
+    CommonResp  CommonResp = 1;
+}
+
+message Followers {
+    int64 Id = 1;
+    string UserId = 2;
+    string FansId = 3;
+    int64 CreateTime = 4;
+    string UserFace = 5;
+    string UserName = 6;
+    string FansFace = 7;
+    string FansName = 8;
+    string Remark = 9;
+}
+
+message GetFollowersReq {
+    string OperationID = 1;
+    server_api_params.RequestPagination Pagination = 2;
+    string StartTime = 3;
+    string EndTime = 4;
+    string Follower = 5;
+    string FollowedUser = 6;
+}
+
+message GetFollowersResp {
+    CommonResp  CommonResp = 1;
+    server_api_params.ResponsePagination Pagination = 2;
+    int64 FollowersCount = 3;
+    repeated Followers Followers = 4;
+}
+
+message AlterFollowerReq {
+    string OperationID = 1;
+    int64 Id = 2;
+    string Remark = 3;
+}
+
+message AlterFollowerResp {
+    CommonResp  CommonResp = 1;
+}
+
+message DeleteFollowersReq {
+    string OperationID = 1;
+    repeated int64 Id = 2;
+}
+
+message DeleteFollowersResp {
+    CommonResp  CommonResp = 1;
+}
+
+service adminCMS {
+    rpc AdminLogin(AdminLoginReq) returns(AdminLoginResp);
+    rpc AdminLoginV2(AdminLoginReq) returns(AdminLoginResp);
+    rpc GetDiscoverUrl(GetDiscoverUrlReq) returns(GetDiscoverUrlResp);
+    rpc SaveDiscoverUrl(SaveDiscoverUrlReq) returns(SaveDiscoverUrlResp);
+    rpc SwitchDiscoverStatus(SwitchDiscoverStatusReq) returns(SwitchDiscoverStatusResp);
+
+    rpc GetAppVersionByID(appversion.GetAppVersionByIDReq) returns(appversion.GetAppVersionByIDResp);
+    rpc GetLatestAppVersion(appversion.GetLatestAppVersionReq) returns(appversion.GetLatestAppVersionResp);
+    rpc GetAppVersions(appversion.GetAppVersionsReq) returns(appversion.GetAppVersionsResp);
+    rpc AddAppVersion(appversion.AddAppVersionReq) returns(appversion.CommonResp);
+    rpc EditAppVersion(appversion.EditAppVersionReq) returns(appversion.CommonResp);
+    rpc DeleteAppVersion(appversion.DeleteAppVersionReq) returns(appversion.CommonResp);
+
+    rpc GetInviteCodeBaseLink(GetInviteCodeBaseLinkReq) returns(GetInviteCodeBaseLinkResp);
+    rpc SetInviteCodeBaseLink(SetInviteCodeBaseLinkReq) returns(GetInviteCodeBaseLinkResp);
+
+
+    rpc CheckInviteCode(CheckInviteCodeRequest) returns(CheckInviteCodeResponse);
+    // Channel Code
+    rpc GetChannelCodeList(GetChannelCodeListRequest) returns(GetChannelCodeListResponse);
+    rpc SwitchChannelCodeState(SwitchChannelCodeStateRequest) returns(SwitchChannelCodeStateResponse);
+    rpc EditChannelCode(EditChannelCodeRequest) returns(EditChannelCodeResponse);
+    rpc AddChannelCode(AddChannelCodeRequest) returns(AddChannelCodeResponse);
+    rpc MultiDeleteChannelCode(MultiDeleteChannelCodeRequest) returns(MultiDeleteChannelCodeResponse);
+    rpc SetChannelCodeLimit(SetChannelCodeLimitRequest) returns(SetChannelCodeLimitResponse);
+    rpc SetChannelCodeSwitch(SetChannelCodeSwitchRequest) returns(SetChannelCodeSwitchResponse);
+    // Invite Code
+    rpc SetInviteCodeSwitch(SetInviteCodeSwitchRequest) returns(SetInviteCodeSwitchResponse);
+    rpc SetInviteCodeLimit(SetInviteCodeLimitRequest) returns(SetInviteCodeLimitResponse);
+    rpc MultiDeleteInviteCode(MultiDeleteInviteCodeRequest) returns(MultiDeleteInviteCodeResponse);
+
+    rpc AddInviteCode(AddInviteCodeRequest) returns(AddInviteCodeResponse);
+    rpc GetInviteCodeList(GetInviteCodeListRequest) returns(GetInviteCodeListResponse);
+
+
+    rpc AddAdminUser(AddAdminUserReq) returns (AddAdminUserResp);
+    rpc DeleteAdminUser(DeleteAdminUserReq) returns (DeleteAdminUserResp);
+    rpc AlterAdminUser(AlterAdminUserRequest) returns (AlterAdminUserResp);
+    rpc GetAdminUsers(GetAdminUsersReq) returns (GetAdminUsersResp);
+    rpc SwitchAdminUserStatus(SwitchAdminUserStatusReq) returns (SwitchAdminUserStatusResp);
+    rpc ChangeAdminUserPassword(ChangeAdminUserPasswordReq) returns (ChangeAdminUserPasswordResp);
+
+    rpc GetgAuthQrCode(GetgAuthQrCodeReq) returns (GetgAuthQrCodeResp);
+    rpc AlterGAuthStatus(AlterGAuthStatusReq) returns (AlterGAuthStatusResp);
+
+    rpc GetAdminPermissionReq(AdminPermissionsReq) returns (AdminPermissionsResp);
+    rpc AddAdminRole(AddAdminRoleRequest) returns (AddAdminRoleResponse);
+    rpc AlterAdminRole(AlterAdminRoleRequest) returns (AlterAdminRoleResponse);
+    rpc DeleteAdminRole(AlterAdminRoleRequest) returns (AlterAdminRoleResponse);
+    rpc GetAllAdminRoles(GetAllAdminRolesReq) returns (GetAllAdminRolesResp);
+    rpc SearchAminRoles(SearchAminRolesRequest) returns (GetAllAdminRolesResp);
+
+    rpc AddApiAdminRole(AddApiAdminRoleRequest) returns (AddApiAdminRoleResponse);
+    rpc AlterApiAdminRole(AlterApiAdminRoleRequest) returns (AlterApiAdminRoleResponse);
+    rpc DeleteApiAdminRole(AlterApiAdminRoleRequest) returns (AlterApiAdminRoleResponse);
+    rpc GetAllApiAdminRoles(GetAllApiAdminRolesReq) returns (GetAllApiAdminRolesResp);
+    rpc SearchApiAdminRoles(SearchApiAdminRoleRequest) returns (GetAllApiAdminRolesResp);
+
+    rpc AddPageAdminRole(AddPageAdminRoleRequest) returns (AddPageAdminRoleResponse);
+    rpc AlterPageAdminRole(AlterPageAdminRoleRequest) returns (AlterPageAdminRoleResponse);
+    rpc DeletePageAdminRole(AlterPageAdminRoleRequest) returns (AlterPageAdminRoleResponse);
+    rpc GetAllPageAdminRoles(GetAllPageAdminRolesReq) returns (GetAllPageAdminRolesResp);
+    rpc SearchPageAdminRoles(SearchPageAdminRolesRequest) returns (GetAllPageAdminRolesResp);
+
+    rpc AddAdminAction(AddAdminActionRequest) returns (AddAdminActionResponse);
+    rpc AlterAdminAction(AlterAdminActionRequest) returns (AlterAdminActionResponse);
+    rpc DeleteAdminAction(AlterAdminActionRequest) returns (AlterAdminActionResponse);
+    rpc GetAllAdminAction(GetAllAdminActionReq) returns (GetAllAdminActionResp);
+
+    rpc SearchAdminUsers(SearchAdminUsersRequest) returns (GetAdminUsersResp);
+    rpc OperationLog(OperationLogRequest) returns (OperationLogRequest);
+    rpc SearchOperationLogs(SearchOperationLogsRequest) returns (SearchOperationLogsResponse);
+
+    rpc GetInterests(GetInterestsReq)returns(GetInterestsResp);
+    rpc DeleteInterests(DeleteInterestsReq)returns(DeleteInterestsResp);
+    rpc AlterInterest(AlterInterestReq)returns(AlterInterestResp);
+    rpc ChangeInterestStatus(ChangeInterestStatusReq)returns(ChangeInterestStatusResp);
+    rpc AddInterests(AddInterestsReq)returns(AddInterestsResp);
+
+    rpc GetUserInterests(GetUserInterestsReq)returns(GetUserInterestsResp);
+    rpc AlterUserInterests(AlterUserInterestsReq)returns(AlterUserInterestsResp);
+    rpc DeleteUserInterests(DeleteUserInterestsReq)returns(DeleteUserInterestsResp);
+
+    rpc GetGroupInterests(GetGroupInterestsReq)returns(GetGroupInterestsResp);
+    rpc AlterGroupInterests(AlterGroupInterestsReq)returns(AlterGroupInterestsResp);
+
+    // me page
+    rpc GetMePageURL(GetMePageURLReq)returns(GetMePageURLResp);
+    rpc SaveMePageURL(SaveMePageURLReq)returns(SaveMePageURLResp);
+    rpc SwitchMePageURL(SwitchMePageURLReq)returns(SwitchMePageURLResp);
+    rpc GetMePageURLs(GetMePageURLsReq)returns(GetMePageURLsResp);
+
+    // short video
+    rpc ManagementShortVideo(ManagementShortVideoRequest) returns (ManagementShortVideoResponse);
+    rpc DeleteShortVideo(DeleteShortVideoRequest) returns (DeleteShortVideoResponse);
+    rpc AlterShortVideo(AlterShortVideoRequest) returns (AlterShortVideoResponse);
+    // short video like
+    rpc GetShortVideoLikeList(GetShortVideoLikeListRequest) returns (GetShortVideoLikeListResponse);
+    rpc DeleteShortVideoLike(DeleteShortVideoLikeRequest) returns (DeleteShortVideoLikeResponse);
+
+    rpc GetShortVideoCommentReplies(GetShortVideoCommentRepliesReq)returns(GetShortVideoCommentRepliesResp);
+    rpc AlterReply(AlterReplyReq)returns(AlterReplyResp);
+    rpc DeleteReplies(DeleteRepliesReq)returns(DeleteRepliesResp);
+
+    rpc GetShortVideoCommentLikes(GetShortVideoCommentLikesReq)returns(GetShortVideoCommentLikesResp);
+    rpc AlterLike(AlterLikeReq)returns(AlterLikeResp);
+    rpc DeleteLikes(DeleteLikesReq)returns(DeleteLikesResp);
+
+    // short video comment
+    rpc GetShortVideoCommentList(GetShortVideoCommentListRequest) returns (GetShortVideoCommentListResponse);
+    rpc DeleteShortVideoComment(DeleteShortVideoCommentRequest) returns (DeleteShortVideoCommentResponse);
+    rpc AlterShortVideoComment(AlterShortVideoCommentRequest) returns (AlterShortVideoCommentResponse);
+    // short video interest label
+    rpc GetShortVideoInterestLabelList(GetShortVideoInterestLabelListRequest) returns (GetShortVideoInterestLabelListResponse);
+    rpc AlterShortVideoInterestLabel(AlterShortVideoInterestLabelRequest) returns (AlterShortVideoInterestLabelResponse);
+
+    rpc GetFollowers(GetFollowersReq)returns(GetFollowersResp);
+    rpc AlterFollower(AlterFollowerReq)returns(AlterFollowerResp);
+    rpc DeleteFollowers(DeleteFollowersReq)returns(DeleteFollowersResp);
+}

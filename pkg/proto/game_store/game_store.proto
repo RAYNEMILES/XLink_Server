@@ -1,0 +1,404 @@
+syntax = "proto3";
+import "server/pkg/proto/sdk_ws/ws.proto";
+option go_package = "./game_store;game_store";
+package game_store;
+
+message CommonResp{
+  int32   errCode = 1;
+  string  errMsg = 2;
+}
+
+message CategoryMultiLanguage {
+  map<string, string> Category = 1;
+}
+
+message BannerGameInfo {
+  string GameCode = 1;
+  map<string, string> GameName = 2;
+  string CoverImg = 3;
+}
+
+message GameBackgroundInfo {
+  string GameCode = 1;
+  map<string, string> GameName = 2;
+  map<string, string> Description = 3;
+  repeated string HorizontalCover = 4;
+  string CoverImg = 5;
+  repeated string Categories = 6;
+  repeated string Classification = 7;
+  string SupportPlatform = 8;
+  int32 SortPriority = 9;
+  int32  Hot = 10;
+  int32  State = 11;
+  string Publisher = 12;
+}
+
+message GameBackgroundListInfo {
+  string GameCode = 1;
+  map<string, string> GameName = 2;
+  map<string, string> Description = 3;
+  repeated string HorizontalCover = 4;
+  string CoverImg = 5;
+  repeated CategoryMultiLanguage Categories = 6;
+  repeated string Classification = 7;
+  string SupportPlatform = 8;
+  string  Publisher = 9;
+  int32 SortPriority = 10;
+  int32  Hot = 11;
+  int32  State = 12;
+  int64  CreateTime = 13;
+}
+
+message GameListInfo {
+  string GameCode = 1;
+  map<string, string> GameName = 2;
+  string CoverImg = 3;
+  repeated CategoryMultiLanguage Categories = 4;
+  int32 Hot = 7;
+  int64 DeleteTime = 8;
+  int64 CreateTime = 9;
+}
+
+message GameNameInfo {
+  string GameCode = 1;
+  string CoverImg = 2;
+  map<string, string> GameName = 3;
+}
+
+message Categories {
+  int64 Id = 1;
+  map<string, string> Detail = 2;
+}
+
+message CategoryDetailInfo {
+  map<string, string> Categories = 1;
+  int64 CategoryID = 2;
+  int64 UsedAmount = 3;
+  string Creator = 4;
+  int64 CreateTime = 5;
+  string Editor = 6;
+  int64 EditTime = 7;
+  int32 SortPriority = 8;
+  int32 State = 9;
+}
+
+message BannerGamesReq {
+  string OperationID = 1;
+}
+
+message BannerGamesResp {
+  CommonResp CommonResp = 1;
+  repeated BannerGameInfo BannerGameList = 2;
+}
+
+message TodayRecommendationsReq {
+  string OperationID = 1;
+  repeated int64 Categories = 2;
+  server_api_params.RequestPagination Pagination = 3;
+}
+
+message TodayRecommendationsResp {
+  CommonResp CommonResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated GameListInfo RecommendationGameList = 3;
+  int32 GameNums = 4;
+}
+
+message PopularGamesReq {
+  string OperationID = 1;
+  repeated int64 Categories = 2;
+  server_api_params.RequestPagination Pagination = 3;
+}
+
+message PopularGamesResp {
+  CommonResp CommonResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated GameListInfo PopularGameList = 3;
+  int32 GameNums = 4;
+}
+
+message AllGamesReq {
+  string OperationID = 1;
+  repeated int64 Categories = 2;
+  server_api_params.RequestPagination Pagination = 3;
+}
+
+message AllGamesResp {
+  CommonResp CommonResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated GameListInfo AllGameList = 3;
+  int32 GameNums = 4;
+}
+
+message SearchNameReq {
+  string OperationID = 1;
+  string Name = 2;
+  string NameType = 3;
+  int32 GetCount = 4;
+}
+
+message SearchNameResp {
+  CommonResp CommonResp = 1;
+  repeated GameNameInfo GameList = 2;
+  int32 GameNums = 4;
+}
+
+message SearchGameListByNameReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string Name = 3;
+  string NameType = 4;
+  repeated int64 Categories = 5;
+}
+
+message SearchGameListByNameResp {
+  CommonResp CommonResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated GameListInfo GameList = 3;
+  int32 GameNums = 4;
+}
+
+message GetCategoriesReq {
+  string OperationID = 1;
+}
+
+message GetCategoriesResp {
+  CommonResp CommonResp = 1;
+  repeated Categories Categories = 2;
+}
+
+message PlayGameRecordReq {
+  string OperationID = 1;
+  string GameCode = 2;
+  string UserID = 3;
+}
+
+message PlayGameRecordResp {
+  CommonResp CommonResp = 1;
+}
+
+message GetHistoryReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string UserID = 3;
+}
+
+message GetHistoryResp {
+  CommonResp CommonResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated GameListInfo GameList = 3;
+  int32 GameNums = 4;
+}
+
+message GetFavoritesReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string UserID = 3;
+}
+
+message GetFavoritesResp {
+  CommonResp CommonResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated GameListInfo GameList = 3;
+  int32 GameNums = 4;
+}
+
+message RemoveGameFavoriteReq {
+  string OperationID = 1;
+  string UserID = 2;
+  string GameCode = 3;
+}
+
+message RemoveGameFavoriteResp {
+  CommonResp CommonResp = 1;
+}
+
+message AddGameFavoriteReq {
+  string OperationID = 1;
+  string UserID = 2;
+  string GameCode = 3;
+}
+
+message AddGameFavoriteResp {
+  CommonResp CommonResp = 1;
+}
+
+message GameDetailsReq {
+  string OperationID = 1;
+  string GameCode = 2;
+  string UserID = 3;
+}
+
+message GameDetailsResp {
+  CommonResp CommonResp = 1;
+  string GameCode = 2;
+  map<string, string> GameName = 3;
+  string CoverImg = 4;
+  repeated string HorizontalCover = 5;
+  string SupportPlatform = 6;
+  repeated CategoryMultiLanguage Categories = 7;
+  map<string, string> Description = 8;
+  int32 Hot = 9;
+  bool HasFavorite = 10;
+  string Publisher = 11;
+}
+
+message GetGameListReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string GameCode = 3;
+  string GameName = 4;
+  int64 Categories = 5;
+  int64 Classification = 6;
+  int32 Platform = 7;
+  string Publisher = 8;
+  int32 Hot = 9;
+  int32 State = 10;
+  string StartTime = 11;
+  string EndTime = 12;
+  string NameType = 13;
+}
+
+message GetGameListResp {
+  CommonResp  CommonResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated GameBackgroundListInfo GameList = 3;
+  int64 GameNum = 4;
+}
+
+message EditGameReq {
+  string OperationID = 1;
+  GameBackgroundInfo Game = 2;
+  string OpUserID = 3;
+}
+
+message EditGameResp {
+  CommonResp  CommonResp = 1;
+}
+
+message AddGameReq {
+  string OperationID = 1;
+  GameBackgroundInfo Game = 2;
+  string OpUserID = 3;
+}
+
+message AddGameResp {
+  CommonResp  CommonResp = 1;
+}
+
+message DeleteGamesReq {
+  string OperationID = 1;
+  repeated string GamesCode = 2;
+  string OpUserID = 3;
+}
+
+message DeleteGamesResp {
+  CommonResp  CommonResp = 1;
+}
+
+message GetCategoryReq {
+  string OperationID = 1;
+  server_api_params.RequestPagination Pagination = 2;
+  string CategoryName  = 3;
+  string Creator = 4;
+  string CreateStartTime = 5;
+  string CreateEndTime = 6;
+  string EditedStartTime = 7;
+  string EditedEndTime = 8;
+  string Editor = 9;
+  int32 State = 10;
+  string NameType = 11;
+}
+
+message GetCategoryResp {
+  CommonResp  CommonResp = 1;
+  server_api_params.ResponsePagination Pagination = 2;
+  repeated CategoryDetailInfo CategoryList = 3;
+  int64 CategoriesNum = 4;
+}
+
+message AddCategoryReq {
+  string OperationID = 1;
+  string OpUserID = 2;
+  map<string, string> CategoryName = 3;
+  int32 SortPriority = 4;
+  int32 State = 5;
+}
+
+message AddCategoryResp {
+  CommonResp  CommonResp = 1;
+}
+
+message EditCategoryReq {
+  string OperationID = 1;
+  string OpUserID = 2;
+  int64 CategoryID = 3;
+  map<string, string> CategoryName = 4;
+  int32 SortPriority = 5;
+  int32 State = 6;
+}
+
+message EditCategoryResp {
+  CommonResp  CommonResp = 1;
+}
+
+message SetCategoryStatusReq {
+  string OperationID = 1;
+  string OpUserID = 2;
+  int64 CategoryID = 3;
+  int32 State = 4;
+}
+
+message SetCategoryStatusResp {
+  CommonResp  CommonResp = 1;
+}
+
+message DeleteCategoryReq {
+  string OperationID = 1;
+  string OpUserID = 2;
+  int64 CategoryID = 3;
+}
+
+message DeleteCategoryResp {
+  CommonResp  CommonResp = 1;
+}
+
+
+service GameStore{
+
+  // game list
+  rpc BannerGames(BannerGamesReq)returns(BannerGamesResp);
+  rpc TodayRecommendations(TodayRecommendationsReq)returns(TodayRecommendationsResp);
+  rpc PopularGames(PopularGamesReq)returns(PopularGamesResp);
+  rpc AllGames(AllGamesReq)returns(AllGamesResp);
+
+  // search by name
+  rpc SearchName(SearchNameReq)returns(SearchNameResp);
+  rpc SearchGameListByName(SearchGameListByNameReq)returns(SearchGameListByNameResp);
+
+  // categories
+  rpc GetCategories(GetCategoriesReq)returns(GetCategoriesResp);
+
+  // favorite and history
+  rpc PlayGameRecord(PlayGameRecordReq)returns(PlayGameRecordResp);
+  rpc GetHistory(GetHistoryReq)returns(GetHistoryResp);
+  rpc GetFavorites(GetFavoritesReq)returns(GetFavoritesResp);
+
+  rpc RemoveGameFavorite(RemoveGameFavoriteReq)returns(RemoveGameFavoriteResp);
+  rpc AddGameFavorite(AddGameFavoriteReq)returns(AddGameFavoriteResp);
+  rpc GameDetails(GameDetailsReq)returns(GameDetailsResp);
+
+  // background management
+  rpc GetGameList(GetGameListReq)returns(GetGameListResp);
+  rpc EditGame(EditGameReq)returns(EditGameResp);
+  rpc AddGame(AddGameReq)returns(AddGameResp);
+  rpc DeleteGames(DeleteGamesReq)returns(DeleteGamesResp);
+
+  // category
+  rpc AddCategory(AddCategoryReq)returns(AddCategoryResp);
+  rpc GetCategory(GetCategoryReq)returns(GetCategoryResp);
+  rpc EditCategory(EditCategoryReq)returns(EditCategoryResp);
+  rpc SetCategoryStatus(SetCategoryStatusReq)returns(SetCategoryStatusResp);
+  rpc DeleteCategory(DeleteCategoryReq)returns(DeleteCategoryResp);
+
+}

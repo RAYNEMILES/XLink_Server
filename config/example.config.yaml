@@ -1,0 +1,879 @@
+# The class cannot be named by Pascal or camel case.
+# The class cannot be named by Pascal or camel case.
+# If it is not used, the corresponding structure will not be set,
+# and it will not be read naturally.
+serverversion: 2.3.0
+#---------------Infrastructure configuration---------------------#
+#environment: DEV,TEST,PROD, DEV will use the server ip for the internal http request, TEST & PROD will use the request.host for the internal http request, so nginx need to add host to the header
+environment : DEV
+
+etcd:
+  etcdSchema: openim  #默认即可
+  etcdAddr: [ 192.168.0.249:2379 ] #单机部署时，默认即可
+
+#Skip init all database, set it true when u need to run the ethgrpc unit test, otherwise set it false
+is_skip_database: true
+
+k8sMod: false #开启k8s模式 使用pod里面环境变量请求services调用服务 而并非etcd
+
+mysql:
+  dbMysqlAddress: [ 192.168.0.249:3306 ] #mysql地址 目前仅支持单机，默认即可
+  dbMysqlUserName: worker #mysql用户名，建议修改
+  dbMysqlPassword: 123456 # mysql密码，建议修改
+  dbMysqlDatabaseName: xlink #默认即可
+  dbTableName: eMsg #默认即可
+  dbMsgTableNum: 1
+  dbMaxOpenConns: 20
+  dbMaxIdleConns: 10
+  dbMaxLifeTime: 120
+
+mongo:
+  dbUri: ""#当dbUri值不为空则直接使用该值
+  dbAddress: 192.168.0.249:27017  #单机时为mongo地址，使用分片集群时，为mongos地址 默认即可
+  dbDirect: false
+  dbTimeout: 60
+  dbDatabase: xlink  #mongo db 默认即可
+  dbSource: admin
+  dbUserName:   #mongo用户名，建议先不设置
+  dbPassword:   #mongo密码，建议先不设置
+  dbMaxPoolSize: 100
+  dbRetainChatRecords: 3650 #mongo保存离线消息时间（天），根据需求修改
+
+redis:
+  dbAddress: [ 192.168.0.249:6379 ] #redis地址 单机时，填写一个地址即可，使用redis集群时候，填写集群中多个节点地址（主从地址都可以填写，增加容灾能力），默认即可
+  dbMaxIdle: 128
+  dbMaxActive: 0
+  dbIdleTimeout: 120
+  dbPassWord: 123456 #redis密码 建议修改
+  enableCluster: false #如果外部redis以集群方式启动，需要打开此开关
+
+kafka:
+  ws2mschat:
+    addr: [ 192.168.0.249:9092 ] #kafka配置，默认即可
+    topic: "ws2ms_chat"
+  ws2mschatoffline:
+    addr: [ 192.168.0.249:9092 ] #kafka配置，默认即可
+    topic: "ws2ms_chat_offline"
+  msgtomongo:
+    addr: [ 192.168.0.249:9092 ] #kafka配置，默认即可
+    topic: "msg_to_mongo"
+  ms2pschat:
+    addr: [ 192.168.0.249:9092 ] #kafka配置，默认即可
+    topic: "ms2ps_chat"
+  msgtosyncdata:
+    addr: [ 192.168.0.249:9092 ] #kafka配置，默认即可
+    topic: "msg_to_syncdata"
+  consumergroupid:
+    msgToTransfer: mongo
+    msgToMongo: mongo_ex
+    msgToMySql: mysql
+    msgToPush: push
+    syncData: sync_data
+
+
+
+#---------------Internal service configuration---------------------#
+
+# The service ip default is empty,
+# automatically obtain the machine's valid network card ip as the service ip,
+# otherwise the configuration ip is preferred
+#如果是单机模式，用0.0.0.0或者不填，默认即可
+serverip: 0.0.0.0
+
+rpcRegisterIP: 0.0.0.0
+listenIP: 0.0.0.0
+
+
+
+# endpoints 内部组件间访问的端点host名称，访问时，可以内部直接访问 host:port 来访问
+endpoints:
+  api: openim_api
+  cmsapi: openim_cms_api
+  push: openim_push
+  msg_gateway: openim_msg_gateway
+  rpc_auth: openim_rpc_auth
+  rpc_friend: openim_rpc_friend
+  rpc_group: openim_rpc_group
+  rpc_msg: openim_rpc_msg
+  rpc_user: openim_rpc_user
+  rpc_statistic: openim_rpc_statistic
+  rpc_admin_cms: openim_rpc_admin_cms
+  rpc_message_cms: openim_rpc_admin_cms
+  rpc_office: openim_rpc_office
+
+api:
+  openImApiPort: [ 10002 ] #api服务端口，默认即可，需要开放此端口或做nginx转发
+  listenIP: 0.0.0.0
+cmsapi:
+  openImCmsApiPort: [ 10006 ] #管理后台api服务端口，默认即可，需要开放此端口或做nginx转发
+  listenIP: 0.0.0.0
+sdk:
+  openImSdkWsPort: [ 10003 ] #jssdk服务端口，默认即可，项目中使用jssdk才需开放此端口或做nginx转发
+  dataDir: [ ../db/sdk/ ]
+  openImWsAddress: ws://127.0.0.1:10001
+  openImApiAddress: http://127.0.0.1:10002
+localdata:
+  dataDir: ../db/sdk/ #save the sqlite local databases
+#对象存储服务，以下配置二选一，目前支持两种，腾讯云和minio，二者配置好其中一种即可（如果使用minio参考https://doc.rentsoft.cn/#/qa/minio搭建minio服务器）
+credential: #腾讯cos，发送图片、视频、文件时需要，请自行申请后替换，必须修改
+  tencent:
+    appID: 1315905058
+    region: ap-singapore
+    accelerate: true
+    bucket: xlink-dev-1315905058
+    persistenceBucket: xlink-dev-persisten-1315905058
+    secretID: IKIDYuVrxmMhrnX5OWOGsHSRBhxwhDWe083n
+    secretKey: f6HFzZu0sV5XzMjvtdLuGTVIsEMIyQfi
+  minio: #MinIO 发送图片、视频、文件时需要，请自行申请后替换，必须修改。 客户端初始化InitSDK，中 object_storage参数为minio
+    bucket: im-oss # 存储内容桶
+    appBucket: im-app # 存储app的桶
+    persistenceBucket: im-persistence # store files which need persistent storage
+    location: us-east-1
+    endpoint: http://192.168.0.148:10005 #minio外网ip 这个ip是给客户端访问的
+    endpointInner: http://127.0.0.1:10005 #minio内网地址 如果im server 可以通过内网访问到 minio就可以填写
+    endpointInnerEnable: true #是否启用minio内网地址 启用可以让桶初始化，IM server连接minio走内网地址访问
+    accessKeyID: testim
+    secretAccessKey: 12345678
+  ali: # ali oss
+    regionID: "oss-cn-beijing"
+    accessKeyID: ""
+    accessKeySecret: ""
+    stsEndpoint: "sts.cn-beijing.aliyun.com"
+    ossEndpoint: "oss-cn-beijing.aliyuncs.com"
+    bucket: "bucket1"
+    finalHost: "http://bucket1.oss-cn-beijing.aliyuncs.com"
+    stsDurationSeconds: 3600
+    OssRoleArn: "acs:ram::xxx:role/xxx"
+
+
+
+rpcport: #rpc服务端口 默认即可
+  openImUserPort: [ 10110 ]
+  openImFriendPort: [ 10120 ]
+  openImMessagePort: [ 10130 ]
+  openImMessageGatewayPort: [ 10140 ]
+  openImGroupPort: [ 10150 ]
+  openImAuthPort: [ 10160 ]
+  openImPushPort: [ 10170 ]
+  openImStatisticsPort: [ 10180 ]
+  openImMessageCmsPort: [ 10190 ]
+  openImAdminCmsPort: [ 10200 ]
+  openImOfficePort: [ 10210 ]
+  openImOrganizationPort: [ 10220 ]
+  openImConversationPort: [ 10230 ]
+  openImCachePort: [10240]
+  openImLocalDataPort: [10250]
+  openImMomentsPort: [ 10270 ]
+  openImNewsPort: [ 10280 ]
+  openImGameStorePort: [ 10290 ]
+  openImShortVideoPort: [ 10300 ]
+  openImMistPort: [ 10330 ]
+  state:
+    stateChange:
+      switch: false
+
+rpcregistername: #rpc注册服务名，默认即可
+  openImUserName: User
+  openImFriendName: Friend
+  openImOfflineMessageName: OfflineMessage
+  openImPushName: Push
+  openImOnlineMessageRelayName: OnlineMessageRelay
+  openImGroupName: Group
+  openImAuthName: Auth
+  openImStatisticsName: Statistics
+  openImMessageCMSName: MessageCMS
+  openImAdminCMSName: AdminCMS
+  openImOfficeName: Office
+  openImOrganizationName: Organization
+  openImConversationName: Conversation
+  openImMoemntsName: Moments
+  openImNewsName: News
+  openImShortVideoName: ShortVideo
+  openImCacheName: Cache
+  openImRealTimeCommName: RealTimeComm
+  openImLocalDataName: openImLocalDataName
+  openImGameStoreName: GameStore
+
+
+log:
+  storageLocation: ../logs/
+  rotationTime: 24
+  remainRotationCount: 3 #日志数量
+  #日志级别 0 panic 1 fetal 2 error 3 warn 4 info 5 debug 6 trace 6表示全都打印，测试阶段建议设置为6
+  remainLogLevel: 6
+  #gorm loglevel 1 slient 2 error 3 warn 4 info
+  gormLogLevel: 3
+  elasticSearchSwitch: false
+  elasticSearchAddr: [ 127.0.0.1:9201 ]
+  elasticSearchUser: ""
+  elasticSearchPassword: ""
+
+modulename: #日志文件按模块命名，默认即可
+  longConnSvrName: msg_gateway
+  msgTransferName: msg_transfer
+  pushName: push
+
+longconnsvr:
+  openImWsPort: [ 10001 ] # ws服务端口，默认即可，要开放此端口或做nginx转发
+  websocketMaxConnNum: 10000
+  websocketMaxMsgLen: 4096
+  websocketTimeOut: 10
+
+## 推送只能开启一个 enable代表开启
+push:
+  tpns: #腾讯推送，暂未测试 暂不要使用
+    ios:
+      accessID: 1600018281
+      secretKey: 3cd68a77a95b89e5089a1aca523f318f
+    android:
+      accessID: 111
+      secretKey: 111
+    enable: false
+  jpns: #极光推送 在极光后台申请后，修改以下四项，必须修改
+    appKey: 7554b7e87faee99c5981a6ab
+    masterSecret: 5cc039b7d6f51c89764b3e0b
+    pushUrl: "https://api.jpush.cn/v3/push"
+    pushIntent: "intent:#Intent;component=com.peak.xlink/com.peak.xlink.MainActivity;end"
+    isProduct: true
+    enable: true
+  getui:  #个推推送，暂未测试 暂不要使用
+    pushUrl: "https://restapi.getui.com/v2/$appId"
+    masterSecret: ""
+    appKey: ""
+    intent: ""
+    enable: false
+
+
+
+manager:
+  #app管理员userID和对应的secret  建议修改。 用于管理后台登录，也可以用户管理后台对应的api
+  appManagerUid: [ "bytechat001","bytechat002", "bytechat003", "bytechat004"]
+  secrets: [ "a001678@!","a002jkl@!", "a003fgh@!", "a004poi@!"]
+  appSysNotificationName: "Notification"
+
+secret: tuoyun
+# 多端互踢策略
+# 1：多平台登录：Android、iOS、Windows、Mac 每种平台只能一个在线，web端可以多个同时在线
+multiloginpolicy: 1
+
+#chat log insert to db
+chatpersistencemysql: true
+#可靠性存储
+reliablestorage: false
+#消息缓存时间
+msgCacheTimeout: 86400
+#群聊已读开启
+groupMessageHasReadReceiptEnable: true
+#单聊已读开启
+singleMessageHasReadReceiptEnable: true
+
+
+locationIpServerAddressPreFix: "http://ip-api.com/json/"
+locationIpServerAddressPostFix: "?lang=zh-CN"
+
+
+
+callbackAfterSendMsg:
+  switch: true
+  expireTime: 300 #5分钟后不能撤回
+
+#token config
+tokenpolicy:
+  accessSecret: "open_im_server" #token生成相关，默认即可
+  accessSecretGAuth: "open_im_server_g_auth"
+  # Token effective time day as a unit
+  accessExpire: 3650 #token过期时间（天） 默认即可
+messageverify:
+  bytechatmyfriendVerify: true
+
+#ios系统推送声音以及标记计数
+iospush:
+  pushSound: "xxx"
+  badgeCount: true
+
+callback:
+  # callback url 需要自行更换callback url
+  callbackUrl : "http://127.0.0.1:8080/callback"
+  # 开启关闭操作前后回调的配置
+  callbackBeforeSendSingleMsg:
+    enable: false # 回调是否启用
+    callbackTimeOut: 2 # 回调超时时间
+    callbackFailedContinue: true # 回调超时是否继续执行代码
+  callbackAfterSendSingleMsg:
+    enable: false
+    callbackTimeOut: 2
+  callbackBeforeSendGroupMsg:
+    enable: false
+    callbackTimeOut: 2
+    callbackFailedContinue: true
+  callbackAfterSendGroupMsg:
+    enable: false
+    callbackTimeOut: 2
+  callbackWordFilter:
+    enable: false
+    callbackTimeOut: 2
+    callbackFailedContinue: true
+  callbackUserOnline:
+    enable: false
+    callbackTimeOut: 2
+  callbackUserOffline:
+    enable: false
+    callbackTimeOut: 2
+  callbackOfflinePush:
+    enable: false
+    callbackTimeOut: 2
+    callbackFailedContinue: true # 回调超时是否继续离线推送
+
+notification:
+  groupCreated:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: true
+      title: "you have a new group" # xx create the group
+      desc: "create group desc"
+      ext: "create group ext"
+    defaultTips:
+      tips: "create the group"  # xx create the group
+
+  groupInfoSet:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "group information was updated"
+      desc: "groupInfoSet desc"
+      ext: "groupInfoSet ext"
+    defaultTips:
+      tips: "modified the group profile"  # group info changed by xx
+
+  joinGroupApplication:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: true
+      title: "someone applies to join the group"
+      desc: "joinGroupApplication desc"
+      ext: "joinGroupApplication ext"
+    defaultTips:
+      tips: "apply to join the group"  # group info changed by xx
+
+  memberQuit:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "someone leaves the group"
+      desc: "memberQuit desc"
+      ext: "memberQuit ext"
+    defaultTips:
+      tips: "quit group chat"  # group info changed by xx
+
+  groupApplicationAccepted:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "someone joins the group"
+      desc: "groupApplicationAccepted desc"
+      ext: "groupApplicationAccepted ext"
+    defaultTips:
+      tips: "was allowed to join the group"  # group info changed by xx
+
+  groupApplicationRejected:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: false
+      title: "someone was rejected to the group"
+      desc: " desc"
+      ext: " ext"
+    defaultTips:
+      tips: "was rejected into the group"  # group info changed by xx
+
+  groupOwnerTransferred:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "group ownership was updated"
+      desc: "groupOwnerTransferred desc"
+      ext: "groupOwnerTransferred ext"
+    defaultTips:
+      tips: "become a new group owner"  # group info changed by xx
+
+  memberKicked:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "someone was kicked out of the group"
+      desc: "memberKicked desc"
+      ext: "memberKicked ext"
+    defaultTips:
+      tips: "was kicked out of the group"  # group info changed by xx
+
+  memberInvited:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "someone was invited into the group"
+      desc: "memberInvited desc"
+      ext: "memberInvited ext"
+    defaultTips:
+      tips: "was invited into the group"  # group info changed by xx
+
+  memberEnter:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "someone enters the group"
+      desc: "memberEnter desc"
+      ext: "memberEnter ext"
+    defaultTips:
+      tips: "entered the group"  # group info changed by xx
+
+  groupDismissed:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "someone dismissed the group"
+      desc: "groupDismissed desc"
+      ext: "groupDismissed ext"
+    defaultTips:
+      tips: "group dismissed"
+
+
+  groupMuted:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "someone muted the group"
+      desc: "groupMuted desc"
+      ext: "groupMuted ext"
+    defaultTips:
+      tips: "group Muted"
+
+  groupCancelMuted:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "someone unmuted the group"
+      desc: "groupCancelMuted desc"
+      ext: "groupCancelMuted ext"
+    defaultTips:
+      tips: "group Cancel Muted"
+
+
+  groupMemberMuted:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "someone was muted in the group"
+      desc: "groupMemberMuted desc"
+      ext: "groupMemberMuted ext"
+    defaultTips:
+      tips: "group Member Muted"
+
+  groupMemberCancelMuted:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: false
+      title: "someone was unmuted in the group"
+      desc: "groupMemberCancelMuted desc"
+      ext: "groupMemberCancelMuted ext"
+    defaultTips:
+      tips: "group Member Cancel Muted"
+
+  groupMemberInfoSet:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: false
+      title: "group member information was updated"
+      desc: "groupMemberInfoSet desc"
+      ext: "groupMemberInfoSet ext"
+    defaultTips:
+      tips: "group member info set"
+
+
+  organizationChanged:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: false
+      title: "organizationChanged title"
+      desc: "organizationChanged desc"
+      ext: "organizationChanged ext"
+    defaultTips:
+      tips: "organization changed"
+
+
+
+  #############################friend#################################
+
+  friendApplicationAdded:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: true
+      title: "Somebody applies to add you as a friend"
+      desc: "Somebody applies to add you as a friend"
+      ext: "Somebody applies to add you as a friend"
+    defaultTips:
+      tips: "I applies to add you as a friend"  #
+
+  friendApplicationApproved:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: true
+      title: "Someone applies to add your friend application"
+      desc: "Someone applies to add your friend application"
+      ext: "Someone applies to add your friend application"
+    defaultTips:
+      tips: "I applies to add your friend application"  #
+
+
+  friendApplicationRejected:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: true
+      title: "Someone rejected your friend application"
+      desc: "Someone rejected your friend application"
+      ext: "Someone rejected your friend application"
+    defaultTips:
+      tips: "I rejected your friend application"  #
+
+
+
+  userBlockedYouNotification:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: true
+      title: "The message is successfully sent but rejected by the receiver / 消息已发出，但被对方拒收了"
+      desc: "The message is successfully sent but rejected by the receiver / 消息已发出，但被对方拒收了"
+      ext: "The message is successfully sent but rejected by the receiver / 消息已发出，但被对方拒收了"
+    defaultTips:
+      tips: "The message is successfully sent but rejected by the receiver / 消息已发出，但被对方拒收了"  #
+
+
+  userNotFriendNotification:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: true
+      title: "You are not friends/你们不是好友"
+      desc: "You are not friends/你们不是好友"
+      ext: "You are not friends/你们不是好友"
+    defaultTips:
+      tips: "You are not friends/你们不是好友"  #
+
+
+
+
+  friendAdded:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: true
+      title: "We have become friends"
+      desc: "We have become friends"
+      ext: "We have become friends"
+    defaultTips:
+      tips: "We have become friends"  #
+
+
+
+  friendDeleted:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: true
+      title: "deleted a friend"
+      desc: "deleted a friend"
+      ext: "deleted a friend"
+    defaultTips:
+      tips: "deleted a friend"  #
+
+
+  friendRemarkSet:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: true
+      title: "Your friend's profile has been changed"
+      desc: "Your friend's profile has been changed"
+      ext: "Your friend's profile has been changed"
+    defaultTips:
+      tips: "Your friend's profile has been changed"  #
+
+
+
+  blackAdded:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: true
+      title: "blocked a user"
+      desc: "blocked a user"
+      ext: "blocked a user"
+    defaultTips:
+      tips: "blocked a user"  #
+
+
+  blackDeleted:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: true
+      title: "Remove a blocked user"
+      desc: "Remove a blocked user"
+      ext: "Remove a blocked user"
+    defaultTips:
+      tips: "Remove a blocked user"
+
+  #####################user#########################
+  userInfoUpdated:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+    offlinePush:
+      switch: false
+      title: "user information was updated"
+      desc: "user information was updated"
+      ext: "user information was updated"
+    defaultTips:
+      tips: "user information was updated"
+
+  #####################conversation#########################
+  conversationOptUpdate:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: false
+      offlinePush:
+        switch: true
+        title: "conversation was updated"
+        desc: "conversation opt update"
+        ext: "conversation opt update"
+      defaultTips:
+        tips: "conversation was updated"
+
+  conversationSetPrivate:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+    offlinePush:
+      switch: true
+      title: "burn after reading status was updated"
+      desc: "burn after reading"
+      ext: "burn after reading"
+    defaultTips:
+      openTips: "burn after reading was opened"
+      closeTips: "burn after reading was closed"
+
+  ###################workMoments################
+  workMomentsNotification:
+    conversation:
+      reliabilityLevel: 2
+      unreadCount: true
+      offlinePush:
+        switch: true
+        title: "burn after reading"
+        desc: "burn after reading"
+        ext: "burn after reading"
+      defaultTips:
+        openTips: "burn after reading was opened"
+        closeTips: "burn after reading was closed"
+
+  ###################organization################
+  joinDepartmentNotification:
+    conversation:
+      reliabilityLevel: 3
+      unreadCount: true
+      offlinePush:
+        switch: false
+        title: "welcome user join department"
+        desc: "welcome user join department"
+        ext: "welcome user join department"
+      defaultTips:
+        tips: "welcome user join department"
+
+#---------------demo configuration---------------------#
+#The following configuration items are applied to openIM Demo configuration
+#是否启动demo，如果自身没有账号体系，设置为true
+demoswitch: true
+demo:
+  listenIP: 0.0.0.0
+  #demo对外服务端口，默认即可，需要开放此端口或做nginx转发
+  openImDemoPort: [ 10004 ]
+  alismsverify: #阿里云短信配置，在阿里云申请成功后修改以下四项，必须修改
+    accessKeyId: LTAI5tJPkn4HuuePdiLdGqe7
+    accessKeySecret: 4n9OJ7ZCVN1U6KeHDAtOyNeVZcjOuV
+    signName: 托云信息技术
+    verificationCodeTemplateCode: SMS_226810164
+  superCode: 666666 #超级验证码，建议修改掉，收不到短信验证码时可以用此替代
+  #  second
+  codeTTL: 60
+  expireTTL: 600
+  mail: # support QQ email，Gmail
+    title: "xlink"
+    senderMail: "auto@peakperformances.io"
+    senderAuthorizationCode: "bcmxgffknwchutsn"
+    smtpAddr: "smtp.gmail.com"
+    smtpPort: 465   #需开放此端口 出口方向
+  testDepartMentID: 001
+
+sms:
+  api: "huawei" #alismsverify, twilio, huawei
+  sms_register_cn: "您的注册验证码是[]，将在10分钟后失效"
+  sms_bind_email_cn: "您的绑定邮箱验证码是[]，将在10分钟后失效"
+  sms_resetpassword_cn: "您的重置密码验证码是[]，将在10分钟后失效"
+  sms_register_en: "Your registration verification code is [], it will expire in 10 minutes."
+  sms_resetpassword_en: "Your reset password verification code is []. It will expire in 10 minutes."
+  sms_bind_email_en: "Your binding email verification code is [], it will expire in 10 minutes."
+  twilio:
+    api_url: "https://<api_sid>:<api_secret>@api.twilio.com/2010-04-01/Accounts/<account_sid>/Messages.json"
+    account_sid: "AC98c15312b5feecd44ee9f897050efc44"
+    api_sid: "SK1c28c235056e9f9501fc526e5bc329b7"
+    api_secret: "NBbjFgXaZbI4OdK0kJ2er5ossDeQgOy2"
+    send_number: "+13187089722"
+  huawei:
+    api: "https://smsapi.ap-southeast-1.myhuaweicloud.com:443/sms/batchSendSms/v1"
+    signature: "98cb670aafb7465c8e9815c0bba8c25c"
+    cn:
+      sms_register_cn: "931d809d762d49509599882b4af049f4"
+      sms_reset_password_cn: "5907a3c0630c40abb9f3d632b9bf1467"
+      sms_register_en: "e4061059557b46d2a412e2eeeee73fb4"
+      sms_reset_password_en: "fbefb04f360f4388b776351f17bb85a7"
+      app_key: "57VUGXn11GI7kjf9nPxY0CJtILyq"
+      sender: "8822082606492"
+      app_secret: "7pvcIq2zF2IGlxUeJkq8SdaybpYq"
+    en:
+      sms_register_en: "e5d4049b260c4801934fca58240ee42a"
+      sms_reset_password_en: "b6cf544c32004e84bb0e4d0d82367467"
+      sms_register_cn: "ee4731ef5e9945b8b82c66a2706e93b4"
+      sms_reset_password_cn: "3a3cabec2376495eb888707f13cfd667"
+      app_key: "ig7r326oHMliNm9hm3r08610TZEO"
+      sender: ""
+      app_secret: "e5NkXdyQrmFO0QrzjjvGsiT7XiOe"
+
+trtc:
+  sdkappid: 20001614
+  secretkey: 195a96d37fe8a3d7dac4dc496053dc396832ca3ff3aa2be58b1aa039f82d2d3c
+  record:
+    maxIdleTime: 300
+    streamType: 0 #0：record audio and video stream(default); 1：Only record audio stream;2：Only record video stream;
+    # 1：Single-stream recording, record the audio and video of the subscribed UserId in the room separately, and upload the recorded file to cloud storage；
+    # 2：Mixed stream recording, mix and record the audio and video subscribed to UserId in the room into an audio and video file, and upload the recorded file to cloud storage;
+    recordMode: 2
+    vendor: 0 # 0：tencent cloud storage(COS)，1：AWS cloud storage (COS)
+    region: ap-singapore
+
+rtc:
+  signalTimeout: 35
+
+restrictUserActionTimeLimit : 10
+adminUser2FAuthEnable : true
+totpIssuerName : "ByteChat"
+membersInGroupMaxLimit : 2000
+restrictUserAddFriendOps : true
+
+serverCtrlPrivatePrvMsg : 20
+serverCtrlGroupPrvMsg : 20
+# 手机注册方式：1Verification code 2phone password
+phoneRegisterType: [1, 2]
+
+# is open invite
+invite:
+  isOpen: 1
+  salt: "invite"
+channel:
+  isOpen: 1
+
+imageProxy:
+  imgProxyAddress : "http://192.168.0.249:8080/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/resize:fill:"
+  imgGravityPrePos : ":0/gravity:sm/plain/"
+
+news:
+  articleUrlTemplate: "https://news.xlink-test.com/article/{{.}}"
+
+cron:
+  msgStatistical : "* * * * *"
+  msgCountStatistical : "* * * * *"
+
+oauth:
+  isOpen: 1
+  facebook:
+    clientID: "718945699280717"
+    clientSecret: "f5f6b24c09a5d05e611cf4d7bbc2302c"
+  google:
+    web:
+      clientID: "2848359348-dra8frem6sstk1ghtmn3hf2j97enaouh.apps.googleusercontent.com"
+      clientSecret: "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"
+    android:
+      clientID: ""
+      clientSecret: ""
+    ios:
+      clientID: "26975368630-kgeeklmlqbcfgc5jcqmonlck2jgd991b.apps.googleusercontent.com"
+      clientSecret: "com.googleusercontent.apps.26975368630-kgeeklmlqbcfgc5jcqmonlck2jgd991b"
+  apple:
+    appleId: ""
+    serverId: ""
+    clientSecret: ""
+    teamId: ""
+    keyId: ""
+    privateKey: ""
+    redirectURI: ""
+    isSandbox: false
+
+favorite:
+  maxCapacity: 2147483648 # 2G = 2147483648Byte
+
+gorse:
+  url: "http://192.168.0.244:8088"
+  token: ""
+
+vod:
+  secretId: "https://license.vod-control.com/license/v2/1315905058_1/v_cube.license"
+  secretKey: "e40f606992d9ade0bd0e5d6e477e2fc0"
+
+official:
+  systemOfficialType: 2
+  systemOfficialName: "Xlink News"

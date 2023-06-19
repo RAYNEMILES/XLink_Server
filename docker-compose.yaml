@@ -1,0 +1,238 @@
+version: "3"
+#fixme  Clone openIM Server project before using docker-compose,project address：https://github.com/OpenIMSDK/Open-IM-Server.git
+
+services:
+  mysql:
+    image: mysql:5.7
+    ports:
+      - 13306:3306
+      - 3306:3306
+      - 23306:33060
+    container_name: mysql
+    volumes:
+      - ./components/mysql/data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime
+    environment:
+      MYSQL_ROOT_PASSWORD: openIM
+    restart: always
+
+  mongodb:
+    image: mongo:4.0
+    ports:
+      - 37017:27017
+    container_name: mongo
+    command: --wiredTigerCacheSizeGB 1
+    volumes:
+      - ./components/mongodb/data/db:/data/db
+      - ./components/mongodb/data/logs:/data/logs
+      - ./components/mongodb/data/conf:/etc/mongo
+    #      - ./script/mongo-init.sh:/docker-entrypoint-initdb.d/mongo-init.sh
+    environment:
+      - TZ=Asia/Shanghai
+      # cache
+      - wiredTigerCacheSizeGB=1
+    #      - MONGO_USERNAME=openIM
+    #      - MONGO_PASSWORD=openIM
+    #      - MONGO_INITDB_ROOT_USERNAME=root
+    #      - MONGO_INITDB_ROOT_PASSWORD=root
+    #      - MONGO_INITDB_DATABASE=openIM
+    restart: always
+
+  redis:
+    image: redis
+    ports:
+      - 16379:6379
+    container_name: redis
+    volumes:
+      - ./components/redis/data:/data
+      #redis config file
+      - ./components/redis/config/redis.conf:/usr/local/redis/config/redis.conf
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+    sysctls:
+      net.core.somaxconn: 1024
+    command: redis-server --requirepass 123456 --appendonly yes
+
+  nginx:
+    build:
+      context: ./config/nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "./config/nginx/conf.d:/etc/nginx/conf.d"
+      - "./config/nginx/ca:/etc/nginx/ca"
+      - "./config/nginx/my_modules:/etc/nginx/my_modules"
+      - "./config/nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "./config/nginx/mime.types:/etc/nginx/mime.types:ro"
+      - "./config/nginx/secure:/opt/secure:ro"
+      - "./config/nginx/logs:/var/log/nginx"
+      - "./config/nginx/letsencrypt:/etc/letsencrypt"
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - 2181:2181
+    container_name: zookeeper
+    volumes:
+      - /etc/localtime:/etc/localtime
+    environment:
+      TZ: Asia/Shanghai
+    restart: always
+
+
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    restart: always
+    ports:
+      - 9092:9092
+    environment:
+      TZ: Asia/Shanghai
+      KAFKA_BROKER_ID: 0
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_CREATE_TOPICS: "ws2ms_chat:8:1,ms2ps_chat:8:1,msg_to_mongo:8:1"
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,INSIDE_HOST://localhost:29092
+      KAFKA_LISTENERS: INSIDE://:9092,INSIDE_HOST://:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INSIDE:PLAINTEXT,INSIDE_HOST:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+    depends_on:
+      - zookeeper
+
+
+  etcd:
+    image: quay.io/coreos/etcd
+    ports:
+      - 2379:2379
+      - 2380:2380
+    container_name: etcd
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+    environment:
+      ETCDCTL_API: 3
+    restart: always
+    command: /usr/local/bin/etcd --name etcd0 --data-dir /etcd-data --listen-client-urls http://0.0.0.0:2379 --advertise-client-urls http://0.0.0.0:2379 --listen-peer-urls http://0.0.0.0:2380 --initial-advertise-peer-urls http://0.0.0.0:2380 --initial-cluster etcd0=http://0.0.0.0:2380 --initial-cluster-token tkn --initial-cluster-state new
+
+  minio:
+    image: minio/minio
+    ports:
+      - 10005:9000
+      - 9090:9090
+    container_name: minio
+    volumes:
+      - ./components/minio/data:/data
+      - ./components/minio/config:/root/.minio
+    environment:
+      MINIO_ROOT_USER: user12345
+      MINIO_ROOT_PASSWORD: key12345
+    restart: always
+    command: minio server /data --console-address ':9090'
+  #
+  #  dtm:
+  #    image: yedf/dtm
+  #    ports:
+  #      - 36789:36789
+  #      - 36790:36790
+  #    environment:
+  #      STORE_DRIVER: mysql
+  #      STORE_HOST: localhost
+  #      STORE_USER: root
+  #      STORE_PASSWORD: ''
+  #      STORE_PORT: 3306
+
+
+  imgproxy:
+    restart: unless-stopped
+    image: darthsim/imgproxy:${IMGPROXY_TAG:-latest}
+    container_name: imgproxy_app
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./www:/home:cached
+    ports:
+      - 8080:8080
+    healthcheck:
+      test: ["CMD", "imgproxy", "health"]
+    environment:
+      ### See:
+      ### https://docs.imgproxy.net/configuration
+
+      ### log and debug
+      IMGPROXY_LOG_LEVEL: "warn"
+      IMGPROXY_ENABLE_DEBUG_HEADERS: "false"
+      IMGPROXY_DEVELOPMENT_ERRORS_MODE: "false"
+      IMGPROXY_REPORT_DOWNLOADING_ERRORS: "false"
+
+      ### timeouts
+      IMGPROXY_READ_TIMEOUT: 10
+      IMGPROXY_WRITE_TIMEOUT: 10
+      IMGPROXY_DOWNLOAD_TIMEOUT: 10
+      IMGPROXY_KEEP_ALIVE_TIMEOUT: 300
+      IMGPROXY_MAX_SRC_FILE_SIZE: 20971520 # 20MB
+
+      ### image source
+      IMGPROXY_TTL: 2592000 # client-side cache time is 30 days
+      IMGPROXY_USE_ETAG: "false"
+      IMGPROXY_SO_REUSEPORT: "true"
+      IMGPROXY_IGNORE_SSL_VERIFICATION: "true"
+      IMGPROXY_LOCAL_FILESYSTEM_ROOT: /home
+      IMGPROXY_SKIP_PROCESSING_FORMATS: "svg,webp,avif"
+
+      ### presets
+      IMGPROXY_AUTO_ROTATE: "true"
+      # IMGPROXY_WATERMARK_PATH: /home/watermark.jpg
+      IMGPROXY_PRESETS: default=resizing_type:fit/gravity:sm,logo=watermark:0.5:soea:10:10:0.15,center_logo=watermark:0.3:ce:0:0:0.3
+
+      ### compression
+      IMGPROXY_STRIP_METADATA: "true"
+      IMGPROXY_STRIP_COLOR_PROFILE: "true"
+      IMGPROXY_FORMAT_QUALITY: jpeg=80,webp=70,avif=50
+      IMGPROXY_JPEG_PROGRESSIVE: "false"
+      IMGPROXY_PNG_INTERLACED: "false"
+      IMGPROXY_PNG_QUANTIZATION_COLORS: 128
+      IMGPROXY_PNG_QUANTIZE: "false"
+      IMGPROXY_MAX_ANIMATION_FRAMES: 64
+      IMGPROXY_GZIP_COMPRESSION: 0
+      IMGPROXY_AVIF_SPEED: 8
+
+
+
+
+  open_im_server:
+    build:
+      context: ./
+      dockerfile: deploy.Dockerfile
+    container_name: open_im_server
+    volumes:
+      - ./logs:/Open-IM-Server/logs
+      - /Users/haroon/go:/go
+      - ./config/config.yaml:/Open-IM-Server/config/config.yaml
+      - ./config/config_dev.yaml:/Open-IM-Server/config/config_dev.yaml
+      - ./db/sdk:/Open-IM-Server/db/sdk
+      - ./script:/Open-IM-Server/script
+      - ./IP2LOCATION-LITE-DB5.BIN:/Open-IM-Server/IP2LOCATION-LITE-DB5.BIN
+    restart: always
+    depends_on:
+      - kafka
+      - mysql
+      - mongodb
+      - redis
+      - etcd
+      - minio
+      - imgproxy
+    ports:
+      - 10001-10004:10001-10004
+      - 10006:10006
+      - 10330:10330
+    #network_mode: "host"
+    logging:
+      driver: json-file
+      options:
+        max-size: "1g"
+        max-file: "2"
