@@ -104,6 +104,7 @@ type Group struct {
 	Remark        string    `gorm:"column:remark"`
 	VideoStatus   int8      `gorm:"column:video_status;size:1;default:1;comment:'1 opened 2 banned'"`
 	AudioStatus   int8      `gorm:"column:audio_status;size:1;default:1;comment:'1 opened 2 banned'"`
+	CanAddFriend  int8      `gorm:"column:can_add_friend;size:1;default:1;comment:'1 can add 0 banned'"`
 }
 
 func (Group) TableName() string {
@@ -1824,4 +1825,23 @@ type ShortVideoNotice struct {
 
 func (ShortVideoNotice) TableName() string {
 	return "short_video_notice"
+}
+
+type HomeVisual struct {
+	Id         int64  `gorm:"column:id;primary_key;autoIncrement;type:bigint"`
+	StatusName string `gorm:"column:status_name"`
+	Status     int8   `gorm:"column:status;type:tinyint(3);not null;default:1;comment:'1:开启 2:关闭'"`
+}
+
+func (HomeVisual) TableName() string {
+	return "home_visual"
+}
+
+type Domain struct {
+	Id      int64  `gorm:"column:id;primary_key;autoIncrement;type:bigint"`
+	Address string `gorm:"column:address"`
+}
+
+func (Domain) TableName() string {
+	return "domain"
 }

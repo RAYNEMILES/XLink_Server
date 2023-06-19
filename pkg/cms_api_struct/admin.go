@@ -466,3 +466,31 @@ type SwitchStatusReq struct {
 type SwitchStatusResp struct {
 	CommResp
 }
+
+type GetStatusReq struct {
+	OperationID string `json:"operationID" binding:"required"`
+}
+
+type GetStatusResp struct {
+	CommResp
+	StatusList map[string]int8 `json:"data"`
+}
+
+type SetStatusReq struct {
+	OperationID string          `json:"operationID" binding:"required"`
+	StatusList  map[string]int8 `json:"status_list"`
+}
+
+type GetAllDomainsReq struct {
+	OperationID string `json:"operationID" binding:"required"`
+}
+
+type GetAllDomainsResp struct {
+	CommResp
+	Domains []string `json:"data"`
+}
+
+type SaveAllDomainsReq struct {
+	OperationID string   `json:"operationID" binding:"required"`
+	Domains     []string `json:"domains"`
+}

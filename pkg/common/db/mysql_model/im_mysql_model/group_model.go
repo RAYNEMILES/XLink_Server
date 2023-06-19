@@ -64,7 +64,9 @@ func SetGroupInfo(groupInfo db.Group) error {
 	if err == nil {
 		dbConn.Table("groups").Where("group_id=?", groupInfo.GroupID).Updates(map[string]interface{}{"notification": groupInfo.Notification})
 	}
-
+	if groupInfo.CanAddFriend == 0 {
+		dbConn.Table("groups").Where("group_id=?", groupInfo.GroupID).Updates(map[string]interface{}{"can_add_friend": groupInfo.CanAddFriend})
+	}
 	return err
 }
 

@@ -2039,6 +2039,94 @@ func (s *adminCMSServer) SwitchMePageURL(_ context.Context, req *pbAdminCMS.Swit
 	return resp, nil
 }
 
+func (s *adminCMSServer) GetStatus(_ context.Context, req *pbAdminCMS.GetStatusReq) (*pbAdminCMS.GetStatusResp, error) {
+	log.NewInfo(req.OperationID, utils.GetSelfFuncName(), "req:", req.String())
+	resp := &pbAdminCMS.GetStatusResp{}
+	visuals, err := imdb.GetHomeVisual()
+	if err != nil {
+		return nil, err
+	}
+	resp.StatusList = make(map[string]int32)
+
+	if len(visuals) == 0 {
+		visuals = append(visuals,
+			db.HomeVisual{StatusName: "mayKnow", Status: 1},
+			db.HomeVisual{StatusName: "groupRecommend", Status: 1},
+			db.HomeVisual{StatusName: "shortVideo", Status: 1},
+		)
+		for _, visual := range visuals {
+			_ = imdb.SetHomeVisual(visual)
+		}
+	}
+	for _, status := range visuals {
+		resp.StatusList[status.StatusName] = int32(status.Status)
+	}
+
+	resp.CommonResp = &pbAdminCMS.CommonResp{}
+	resp.CommonResp.ErrMsg = ""
+	log.NewInfo(req.OperationID, utils.GetSelfFuncName(), "resp:", resp.String())
+	return resp, nil
+}
+
+func (s *adminCMSServer) SetStatus(_ context.Context, req *pbAdminCMS.SetStatusReq) (*pbAdminCMS.SetStatusResp, error) {
+	log.NewInfo(req.OperationID, utils.GetSelfFuncName(), "req:", req.String())
+	resp := &pbAdminCMS.SetStatusResp{}
+	for k, v := range req.StatusList {
+		vis := db.HomeVisual{
+			StatusName: k,
+			Status:     int8(v),
+		}
+		err := imdb.SetHomeVisual(vis)
+		if err != nil {
+			log.NewError(req.OperationID, "Set err: ", err.Error())
+			continue
+		}
+	}
+
+	resp.CommonResp = &pbAdminCMS.CommonResp{}
+	resp.CommonResp.ErrMsg = ""
+	log.NewInfo(req.OperationID, utils.GetSelfFuncName(), "resp:", resp.String())
+	return resp, nil
+}
+
+func (s *adminCMSServer) GetAllDomains(_ context.Context, req *pbAdminCMS.GetAllDomainsReq) (*pbAdminCMS.GetAllDomainsResp, error) {
+	resp := &pbAdminCMS.GetAllDomainsResp{}
+
+	domains, err := imdb.GetAllDomains()
+	if err != nil {
+		log.NewError(req.OperationID, "Get err: ", err.Error())
+		return nil, err
+	}
+	resp.Domains = make([]string, len(domains))
+
+	for index, domain := range domains {
+		resp.Domains[index] = domain.Address
+	}
+	resp.CommonResp = &pbAdminCMS.CommonResp{}
+	resp.CommonResp.ErrMsg = ""
+	log.NewInfo(req.OperationID, utils.GetSelfFuncName(), "resp:", resp.String())
+	return resp, nil
+}
+
+func (s *adminCMSServer) SaveAllDomains(_ context.Context, req *pbAdminCMS.SaveAllDomainsReq) (*pbAdminCMS.SaveAllDomainsResp, error) {
+	resp := &pbAdminCMS.SaveAllDomainsResp{}
+
+	var domains = make([]db.Domain, len(req.Domains))
+	for index, dem := range req.Domains {
+		domains[index].Address = dem
+	}
+	err := imdb.SaveAllDomains(domains)
+	if err != nil {
+		log.NewError(req.OperationID, "SaveAllDomains err: ", err.Error())
+		return nil, err
+	}
+
+	resp.CommonResp = &pbAdminCMS.CommonResp{}
+	resp.CommonResp.ErrMsg = ""
+	log.NewInfo(req.OperationID, utils.GetSelfFuncName(), "resp:", resp.String())
+	return resp, nil
+}
+
 func GetTencentCloudClient(isPersistent bool) (*cos.Client, error) {
 	cli := sts.NewClient(
 		config.Config.Credential.Tencent.SecretID,

@@ -86,6 +86,7 @@ func initMysqlDB() {
 		&MePageURL{},
 
 		&ShortVideo{}, &ShortVideoLike{}, &ShortVideoComment{}, &ShortVideoCommentLike{}, &ShortVideoFollow{}, &ShortVideoUserCount{}, &ShortVideoNotice{},
+		&HomeVisual{}, &Domain{},
 	)
 
 	db.Set("gorm:table_options", "CHARSET=utf8mb4")
@@ -366,6 +367,15 @@ func initMysqlDB() {
 		fmt.Println("CreateTable " + ShortVideoNotice{}.TableName())
 		db.Migrator().CreateTable(&ShortVideoNotice{})
 	}
+	if !db.Migrator().HasTable(&HomeVisual{}) {
+		fmt.Println("CreateTable " + HomeVisual{}.TableName())
+		db.Migrator().CreateTable(&HomeVisual{})
+	}
+	if !db.Migrator().HasTable(&Domain{}) {
+		fmt.Println("CreateTable " + Domain{}.TableName())
+		db.Migrator().CreateTable(&Domain{})
+	}
+
 	sqlDB.Close()
 }
 

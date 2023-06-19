@@ -197,6 +197,7 @@ type AlterGroupInfoRequest struct {
 	ProfilePhoto string `json:"profile_photo"`
 	GroupType    int    `json:"group_type"`
 	Remark       string `json:"remark"`
+	CanAddFriend int8   `json:"can_add_friend"`
 
 	Interests []int64 `json:"interests"`
 }

@@ -1386,6 +1386,43 @@ message DeleteFollowersResp {
     CommonResp  CommonResp = 1;
 }
 
+
+message GetStatusReq {
+    string OperationID = 1;
+}
+
+message GetStatusResp {
+    CommonResp CommonResp = 1;
+    map<string, int32> StatusList = 2;
+}
+
+message SetStatusReq {
+    string OperationID = 1;
+    map<string, int32> StatusList = 2;
+}
+
+message SetStatusResp {
+    CommonResp CommonResp = 1;
+}
+
+message GetAllDomainsReq {
+    string OperationID = 1;
+}
+
+message GetAllDomainsResp {
+    CommonResp CommonResp = 1;
+    repeated string Domains = 2;
+}
+
+message SaveAllDomainsReq {
+    string OperationID = 1;
+    repeated string Domains = 2;
+}
+
+message SaveAllDomainsResp {
+    CommonResp CommonResp = 1;
+}
+
 service adminCMS {
     rpc AdminLogin(AdminLoginReq) returns(AdminLoginResp);
     rpc AdminLoginV2(AdminLoginReq) returns(AdminLoginResp);
@@ -1506,4 +1543,13 @@ service adminCMS {
     rpc GetFollowers(GetFollowersReq)returns(GetFollowersResp);
     rpc AlterFollower(AlterFollowerReq)returns(AlterFollowerResp);
     rpc DeleteFollowers(DeleteFollowersReq)returns(DeleteFollowersResp);
+
+
+    rpc GetStatus(GetStatusReq)returns(GetStatusResp);
+    rpc SetStatus(SetStatusReq)returns(SetStatusResp);
+
+    rpc GetAllDomains(GetAllDomainsReq)returns(GetAllDomainsResp);
+    rpc SaveAllDomains(SaveAllDomainsReq)returns(SaveAllDomainsResp);
+
+
 }

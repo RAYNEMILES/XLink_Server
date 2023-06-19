@@ -8,6 +8,7 @@ import (
 	apiChat "Open_IM/internal/api/chat"
 	"Open_IM/internal/api/conversation"
 	"Open_IM/internal/api/discover"
+	"Open_IM/internal/api/domain"
 	"Open_IM/internal/api/familiar"
 	"Open_IM/internal/api/favorite"
 	"Open_IM/internal/api/friend"
@@ -20,6 +21,7 @@ import (
 	"Open_IM/internal/api/privacy"
 	"Open_IM/internal/api/qr_login"
 	"Open_IM/internal/api/short_video"
+	"Open_IM/internal/cms_api/home"
 
 	"Open_IM/internal/api/interest"
 	"Open_IM/internal/api/moments"
@@ -225,6 +227,14 @@ func main() {
 		conversationGroup.POST("/batch_set_conversation", middleware.JWTAuth(), conversation.BatchSetConversations)
 		conversationGroup.POST("/set_recv_msg_opt", middleware.JWTAuth(), conversation.SetRecvMsgOpt)
 		conversationGroup.POST("/modify_conversation_field", middleware.JWTAuth(), conversation.ModifyConversationField)
+	}
+	homeConfigGroup := r.Group("/home_config")
+	{
+		homeConfigGroup.POST("/get_all_configs", middleware.JWTAuth(), home.GetStatus)
+	}
+	domainGroup := r.Group("/domain")
+	{
+		domainGroup.POST("/get_all_domains", middleware.JWTAuth(), domain.GetAllDomains)
 	}
 	// office
 	// officeGroup := r.Group("/office")
