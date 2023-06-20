@@ -234,7 +234,7 @@ func main() {
 	}
 	domainGroup := r.Group("/domain")
 	{
-		domainGroup.POST("/get_all_domains", middleware.JWTAuth(), domain.GetAllDomains)
+		domainGroup.POST("/get_all_domains", domain.GetAllDomains)
 	}
 	// office
 	// officeGroup := r.Group("/office")
