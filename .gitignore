@@ -30,3 +30,4 @@ path_info.cfg
 check_all.sh
 .gitlab-ci.yml
 cmd/Open-IM-SDK-Core/press_test/test_data
+bin.tar.gz
