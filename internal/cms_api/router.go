@@ -1,6 +1,7 @@
 package cms_api
 
 import (
+	"Open_IM/internal/api/domain"
 	"Open_IM/internal/cms_api/admin"
 	"Open_IM/internal/cms_api/appversion"
 	"Open_IM/internal/cms_api/blacklist"
@@ -128,6 +129,11 @@ func NewGinRouter() *gin.Engine {
 	//	organizationRouterGroup.PATCH("/alter_corps_info", organization.AlterStaffsInfo)
 	//	organizationRouterGroup.POST("/add_child_org", organization.AddChildOrganization)
 	// }
+	domainGroup := r2.Group("/domain")
+	{
+		domainGroup.POST("/get_all_domains", domain.GetAllDomains)
+		domainGroup.POST("/save_domains", domain.SaveAllDomains)
+	}
 	groupRouterGroup := r2.Group("/group")
 	{
 		groupRouterGroup.GET("/get_group_by_id", group.GetGroupById)
